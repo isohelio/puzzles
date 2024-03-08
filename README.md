@@ -1,12 +1,12 @@
-# Yet Another IQ FIT Puzzle Solver
+## Yet Another IQ FIT Puzzle Solver
 
 There are many like it, but this one is mine.
 
-## Introduction
+### Introduction
 
 A straight forward, recursive search algorithm for finding all solutions of the IQ FIT puzzle.
 
-## Installation
+### Installation
 
 The software should run on any linux type system with gcc.
 
@@ -27,7 +27,7 @@ The software should run on any linux type system with gcc.
 
     ./iqfit -h
 
-## Results
+### Results
 
 Total solutions without gaps
 
