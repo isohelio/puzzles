@@ -57,7 +57,7 @@ The software should run on any linux type system with gcc.
 ### Piece definitions
 
 The IQ FIT pieces are currently hard wired into the software (see `iqfit.h`). Most of the colours are self explanatory 
-but the blue colour names have been taken to conincide with the physical pieces rather than the instruction manual.
+but the blue colour names have been taken to conincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
 
         1 red          ****     *
           R 31         *  *  ****
