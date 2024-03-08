@@ -54,6 +54,40 @@ The software should run on any linux type system with gcc.
         -O3        skip partial solutions that include some impossible shapes
         -O4        skip partial solutions that include size 7 gaps
 
+### Piece definitions
+
+The IQ FIT pieces are currently hard wired into the software (see iqfit.h).
+
+        1 red          ****     *
+          R 31         *  *  ****
+
+        2 orange        * *    *
+          O 33         ****  ****
+
+        3 yellow       *     **
+          Y 93         ****  ****
+
+        4 cyan           *    **
+          C 96         ****  ****
+
+        5 lightblue    * *      *
+          b 94         ****  ****
+
+        6 pink          *      **
+          p 95         ****  ****
+
+        7 lightgreen   * *    *
+          g 92         ***  ***
+
+        8 blue         * *   *
+          B 34         ***  ***
+
+        9 green         *    **
+          G 32         ***  ***
+
+        10 purple       **   *
+          P 35         ***  ***
+
 ### Solve Puzzles
 
 Partial solutions can be provided using a simple text file format, which consists of 
@@ -64,18 +98,18 @@ Partial solutions can be provided using a simple text file format, which consist
 
 There are examples in the examples folder e.g.
 
-        EXPERT-49
-        ----------
-        YY--b---G-
-        YY--b---GG
-        Y---b---G-
-        Y---bb----
+        STARTER-1
+        ggg-CCCCGG
+        gBg-RCCGGG
+        BB--RPYYYY
+        bBb-RPPP-Y
+        bbbbRR----
 
 To solve the puzzle run
 
         ./iqfit -S examples/examples.txt -p 1
 
-Output (for a different puzzle) will look like this
+Output will look like this
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/404b84f9-71d0-4883-a004-3b5d0908dee8)
 

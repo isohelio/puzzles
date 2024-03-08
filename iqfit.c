@@ -64,7 +64,7 @@ initialise_piece(board *b, piece *p){
 
 				// generate the 4 rotations of the piece
 				for(int c = 0; c < width; c++){
-					if(s[c] == '1'){
+					if(s[c] != ' '){
 						int x = c, y = r;
 						if(rot == 1){
 							x = height - r - 1, y = c;
@@ -520,6 +520,24 @@ board_disable_pieces(board *b, char *abbrevs){
 }
 
 void
+board_print_pieces(board *b){
+	printf("piece information, piece name, abbreviation and terminal colour code\n\n");
+	ForEachPiece(p){
+		for(int r = 0; r < 2; r++){
+			if(r == 0) printf("%2d %-12s ", p->id, p->name);
+			else printf("   %1s %2s         ", p->abbreviation, p->colour);
+			for(int l = 0; l < LEN(p->layout); l++){
+				char *s = p->layout[l][r];
+				printf("%s  ", s);
+			}
+			printf("\n");
+		}
+		printf("\n");	
+	}
+	exit(0);
+}
+
+void
 board_usage(){
 	fprintf(stderr, "\
 usage: iqfit [options]\n\
@@ -534,6 +552,7 @@ solve problems from the iqfit puzzle\n\
   -S file    solve examples from the specified file                 (default: none)\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
+  -P         print description of the IQ FIT pieces\n\
   -h         print this message\n\
 \n\
 default behaviour is to enumerate all solutions, using all optimisations\n\
@@ -553,7 +572,7 @@ int
 board_parse_args(board *b, int argc, char **argv){
 	int c;
 
-	while ((c = getopt(argc, argv, "D:sO:i:o:S:p:t:dv0h")) != -1) {
+	while ((c = getopt(argc, argv, "D:sO:i:o:S:p:t:dv0hP")) != -1) {
 		switch (c) {
 		case 'i': b->input_filename = optarg; break;
 		case 'o': b->output_filename = optarg; break;
@@ -566,6 +585,7 @@ board_parse_args(board *b, int argc, char **argv){
 		case 's': b->no_symmetry = 1 - b->no_symmetry; break;
 		case 'O': b->optimisations = atoi(optarg); break;
 		case 'D': board_disable_pieces(b, optarg); break;
+		case 'P': board_print_pieces(b); break;
 		case 'h': board_usage(); break;
 		default: board_usage(); break;
 		}
