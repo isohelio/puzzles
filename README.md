@@ -61,6 +61,9 @@ The IQ FIT pieces are currently hard wired into the software (see `iqfit.h`). Ea
 Most of the colours are self explanatory 
 but the blue colour names have been taken to conincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
 
+You can view the piece definitions with `./iqfit -P`.
+
+
         1 red          ****     *
           R 31         *  *  ****
 
