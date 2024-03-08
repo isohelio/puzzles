@@ -35,24 +35,24 @@ The software should run on any linux type system with gcc.
     usage: iqfit [options]
 
     solve problems from the iqfit puzzle
-    -p n       print every n'th solution                              (default: 1000)
-    -t n       terminate after the n'th solution                      (default: none)
-    -d         show every step of solving the board                   (default: off)
-    -On        optimisation level 0-4                                 (default: 10!)
-    -o file    print all solutions to file                            (default: none)
-    -i file    read solutions from the specified file                 (default: none)
-    -S file    solve examples from the specified file                 (default: none)
-    -D abbrevs deactivate the pieces specified by their abbreviations (default: none)
-    -s         only generate the non-symmetry related solutions
-    -h         print this message
+        -p n       print every n'th solution                              (default: 1000)
+        -t n       terminate after the n'th solution                      (default: none)
+        -d         show every step of solving the board                   (default: off)
+        -On        optimisation level 0-4                                 (default: 10!)
+        -o file    print all solutions to file                            (default: none)
+        -i file    read solutions from the specified file                 (default: none)
+        -S file    solve examples from the specified file                 (default: none)
+        -D abbrevs deactivate the pieces specified by their abbreviations (default: none)
+        -s         only generate the non-symmetry related solutions
+        -h         print this message
 
     default behaviour is to enumerate all solutions, using all optimisations
 
-    -O0        disable all optimisations, and allow solutions that include gaps
-    -O1        generate all solutions that don't include any gaps
-    -O2        skip partial solutions that include 1, 2 or 3 size gaps
-    -O3        skip partial solutions that include some impossible shapes
-    -O4        skip partial solutions that include size 7 gaps
+        -O0        disable all optimisations, and allow solutions that include gaps
+        -O1        generate all solutions that don't include any gaps
+        -O2        skip partial solutions that include 1, 2 or 3 size gaps
+        -O3        skip partial solutions that include some impossible shapes
+        -O4        skip partial solutions that include size 7 gaps
 
 ### Solve Puzzles
 
