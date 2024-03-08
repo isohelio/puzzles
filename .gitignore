@@ -1,3 +1,5 @@
 /iqfit
 /iqfit.o
 .vscode/settings.json
+.gitignore
+.project
