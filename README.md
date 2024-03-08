@@ -11,7 +11,7 @@ A straight forward, recursive search algorithm for finding all solutions of the 
 The software should run on any linux type system with gcc.
 
 1. Clone/download the repo.
-2. In the repo folder
+2. Run make in the repo folder, which should produce output like this
     
         make clean all
         rm -f *.o *.obj *.exe *.stackdump gmon.out
