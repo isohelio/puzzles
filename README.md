@@ -93,9 +93,9 @@ but the blue colour names have been taken to conincide with the physical pieces 
 
 Partial solutions can be provided using a simple text file format, which consists of 
 
-* a title
+* A title
 * 5 lines of 10 characters using the piece abbreviations
-* unfilled positions can be indicated with a - or _ character
+* Unfilled positions can be indicated with a - or _ character
 
 There are examples in the examples folder e.g.
 
