@@ -56,7 +56,7 @@ The software should run on any linux type system with gcc.
 
 ### Piece definitions
 
-The IQ FIT pieces are currently hard wired into the software (see iqfit.h). Most of the colours are self explanatory 
+The IQ FIT pieces are currently hard wired into the software (see `iqfit.h`). Most of the colours are self explanatory 
 but the blue colour names have been taken to conincide with the physical pieces rather than the instruction manual.
 
         1 red          ****     *
@@ -115,7 +115,7 @@ Output will look like this
 ![image](https://github.com/isohelio/puzzles/assets/38924166/404b84f9-71d0-4883-a004-3b5d0908dee8)
 
 
-Speciy -o filename to capture the puzzle solutions to a text file.
+Speciy `-o filename` to capture the puzzle solutions to a text file.
 
 ### Results
 
