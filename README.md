@@ -87,7 +87,7 @@ but the blue colour names have been taken to conincide with the physical pieces 
           G 32         ***  ***
 
         10 purple       **   *
-          P 35         ***  ***
+           P 35         ***  ***
 
 ### Solve Puzzles
 
