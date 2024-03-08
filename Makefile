@@ -8,5 +8,3 @@ iqfit: iqfit.o iqfit.h
 
 clean:
 	rm -f *.o *.obj *.exe *.stackdump gmon.out
-	
-		

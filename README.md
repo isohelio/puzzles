@@ -152,4 +152,4 @@ The solutions are stored one per line, printed from the top left corner. The pie
         RRRRgggObbRYYRgOOOObBYYYYppppbBBCCPPPpGbBCCCCPPGGG
         RRRRCCCCGGRPPROCCBGGgPOOOObBBGgPYbbbbBppggYYYYpppp
 
-The single solution per line format is convenient for working the solutions in command line tools.
+The single solution per line format is convenient for working with the solutions in command line tools.

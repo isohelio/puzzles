@@ -497,9 +497,9 @@ int
 board_solve(board *b){
 	board_solve_propagate(b, 0);
 
-	for(int i = 0; i <= LEN(pieces); i++){
-		printf("%2d %12lld\n", i, b->search_calls[i]);
-	}
+	// for(int i = 0; i <= LEN(pieces); i++){
+	// 	printf("%2d %12lld\n", i, b->search_calls[i]);
+	// }
 
 	return 0;
 }
