@@ -13,19 +13,19 @@ The software should run on any linux type system with gcc.
 1. Clone/download the repo.
 2. In the repo folder
     
-    make clean all
+        make clean all
 
 3. Run the software with no arguments to generate all the solutions to the puzzle that contain no unfilled spaces. This takes about 2 minutes.
 
-    ./iqfit
+        ./iqfit
 
 4. To capture the solutions into a file
 
-    ./iqfit -o solutions.txt
+        ./iqfit -o solutions.txt
 
 5. To see command line options
 
-    ./iqfit -h
+        ./iqfit -h
 
 ### Usage
 
