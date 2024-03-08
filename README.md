@@ -14,6 +14,9 @@ The software should run on any linux type system with gcc.
 2. In the repo folder
     
         make clean all
+        rm -f *.o *.obj *.exe *.stackdump gmon.out
+        cc -O4 -DNDEBUG -Wall -march=native -fomit-frame-pointer   -c -o iqfit.o iqfit.c
+        gcc -o iqfit iqfit.o -O4 -DNDEBUG -Wall -march=native -fomit-frame-pointer -lm
 
 3. Run the software with no arguments to generate all the solutions to the puzzle that contain no unfilled spaces. This takes about 2 minutes.
 
@@ -64,7 +67,7 @@ Total solutions without gaps
 
 Total solutions with gaps
 
-    iqfit -O1 -p 1000
+    iqfit -O0 -p 1000
 
     total solutions 6462189, invalid solutions 0
 
