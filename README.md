@@ -137,4 +137,19 @@ Total solutions with gaps
 
     total solutions 6462189, invalid solutions 0
 
+### Output Format
 
+The solutions can be captured in an output file, specified with the -o option.
+
+The solutions are stored one per line, printed from the top left corner. The piece positions are indicated using the piece abbreviation. A few lines from the file are shown below
+
+        RRRRgggObbRPYRgOOOObPPYYYYBBBbPPppGGGBCbppppGGCCCC
+        RRRRgggObbRGGRgOOOObGGGppCCCCbYppppBCPPbYYYYBBBPPP
+        RRRRgggOBBRCCRgOOOOBCCCCbGGGBBYbbbbpGPPPYYYYppppPP
+        RRRRgggOBBRGGRgOOOOBGGGCCCCPBBppppCbYPPPppbbbbYYYY
+        RRRRgggObbRYYRgOOOObGYYYYppppbGGPPBBBpCbGGPPPBCCCC
+        RRRRgggObbRYYRgOOOObGYYYYppppbGGCCPPPpBbGCCCCPPBBB
+        RRRRgggObbRYYRgOOOObBYYYYppppbBBCCPPPpGbBCCCCPPGGG
+        RRRRCCCCGGRPPROCCBGGgPOOOObBBGgPYbbbbBppggYYYYpppp
+
+The single solution per line format is convenient for working the solutions in command line tools.
