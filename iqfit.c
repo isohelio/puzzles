@@ -4,6 +4,25 @@
 #define ForEachOrientation(o, p) for(orientation *o = p->orientation, *end = p->orientation + p->orientation_count; o < end; o++)
 #define ForEachPosition(p, ori) for(int p = 0, end = ori->position_count; p < end; p++)
 
+piece_hash
+piece_generate_hash(int *xy, int count){
+	piece_hash hash = 0;
+	int xmin = INT32_MAX, ymin = INT32_MAX;
+
+	for(int i = 0; i < count; i += 2){
+		xmin = MIN(xmin, xy[i]);
+		ymin = MIN(ymin, xy[i + 1]);
+	}
+
+	for(int i = 0; i < count; i += 2){
+		int bit = xy[i] - xmin;
+		int word = xy[i + 1] - ymin;
+		hash |= (piece_hash)((piece_hash)1 << ((8 * word) + bit));
+	}
+
+	return hash;
+}
+
 int
 orientation_store_position(orientation *ori, int x, int y){
 	ori->position[ori->position_count][0] = x;
@@ -22,8 +41,9 @@ orientation_print(orientation *ori){
 }
 
 void
-initialise_piece(piece *p){
-//	printf("initialising %s\n", p->name);
+initialise_piece(board *b, piece *p){
+	if(b->verbose) printf("initialising %s\n", p->name);
+
 	p->orientation_count = 0;
 
 	for(int l = 0; l < LEN(p->layout); l++){
@@ -60,13 +80,24 @@ initialise_piece(piece *p){
 		}
 	}
 
-//	printf("orientations %d\n", p->orientation_count);
-//
-//	ForEachOrientation(ori, p){
-//		orientation_print(ori);
-//	}
-//
-//	printf("count %d\n", p->orientation_count);
+	if(b->verbose){
+		printf("orientations %d\n", p->orientation_count);
+
+		ForEachOrientation(ori, p){
+			orientation_print(ori);
+		}
+
+		printf("count %d\n", p->orientation_count);
+	}
+}
+
+void
+initialise_pieces(board *b){
+	int i = 0;
+	ForEachPiece(p){
+		initialise_piece(b, p);
+		p->id = ++i;
+	}
 }
 
 FILE *
@@ -78,15 +109,6 @@ board_fopen(char *filename, char *mode){
 	}
 
 	return fp;
-}
-
-void
-initialise_pieces(){
-	int i = 0;
-	ForEachPiece(p){
-		initialise_piece(p);
-		p->id = ++i;
-	}
 }
 
 #define board_index(b,x,y)				((y)*b->width + (x))
@@ -142,7 +164,6 @@ board_print(board *b){
 		}
 		printf("\n");
 	}
-//	printf("\n");
 }
 
 /**
@@ -183,14 +204,21 @@ board_region_propagate(board *b, int x, int y, int region){
 }
 
 int
-board_match_shape(board *b, int x, int y, int *empty, int *occupied, int *alternate, int swap){
+board_match(board *b, int x, int y, int *empty, int *occupied, int *alternate, int swap){
 	if(swap == 0){
 		for(int i = 0; empty[i] != 999; i += 2){
-			if(board_position_occupied(b, x + empty[i], y + empty[i+1])) return 0;
+			if(board_position_occupied(b, x + empty[i], y + empty[i + 1])) return 0;
 		}
 
 		for(int i = 0; occupied[i] != 999; i += 2){
-			if(board_position_occupied(b, x + occupied[i], y + occupied[i+1]) == 0) return 0;
+			if(board_position_occupied(b, x + occupied[i], y + occupied[i + 1]) == 0) return 0;
+		}
+
+		if(alternate){
+			for(int i = 0; alternate[i] != 999; i += 2){
+				if(board_position_occupied(b, x + alternate[i], y + alternate[i + 1])) return 1;
+			}
+			return 0;
 		}
 
 	}else{
@@ -202,53 +230,65 @@ board_match_shape(board *b, int x, int y, int *empty, int *occupied, int *altern
 			if(board_position_occupied(b, x + occupied[i + 1], y + occupied[i]) == 0) return 0;
 		}
 
+		if(alternate){
+			for(int i = 0; alternate[i] != 999; i += 2){
+				if(board_position_occupied(b, x + alternate[i + 1], y + alternate[i])) return 1;
+			}
+			return 0;
+		}
 	}
 
 	return 1;
 }
 
-int vertical4_empty[] 			= {  0, 1,          0, 2,          0, 3, 999};
-int vertical4_occupied[] 		= { -1, 0, 1, 0,   -1, 1, 1, 1,   -1, 2, 1, 2,   -1, 3, 1, 3,    0, -1, 0, +4,	999};
+int linear4_empty[] 			= {  0, 1,          0, 2,          0, 3, 999};
+int linear4_occupied[] 			= { -1, 0, 1, 0,   -1, 1, 1, 1,   -1, 2, 1, 2,   -1, 3, 1, 3,    0, -1, 0, +4,	999};
 
-int vertical4_open_empty[] 		= {  0, 1,          0, 2,          0, 3, 999};
-int vertical4_open_occupied[] 	= { -1, 0, 1, 0,   -1, 1, 1, 1,   -1, 2, 1, 2,   -1, 3, 1, 3,    0, -1,			999};
+int linear4_open_empty[] 		= {  0, 1,          0, 2,          0, 3, 999};
+int linear4_open_occupied[] 	= { -1, 0, 1, 0,   -1, 1, 1, 1,   -1, 2, 1, 2,   -1, 3, 1, 3,					999};
+int linear4_open_alternate[] 	= {  0, -1,          0, 4,          999};
 
 int dogleg4_up_empty[] 			= {  1, 0,          1, -1,          2, -1, 					999};
-int dogleg4_up_occupied[] 		= { -1, 0, 0, -1,   0, 1, 1, 1,     2, 0,   1, -2, 2, -2, 	999};
+int dogleg4_up_occupied[] 		= {  0, -1,   		0, 1, 1, 1,     2, 0,   1, -2, 2, -2, 	999};
+int dogleg4_up_alternate[] 		= { -1, 0,          3, -1,           						999};
 
 int dogleg4_down_empty[] 		= {  1, 0,          1,  1,          2, 1, 					999};
-int dogleg4_down_occupied[] 	= { -1, 0, 0, -1,   0, 1, 1, 2,     2, 0, 1, 2, 1, 0,		999};
-
-int horizontal4_empty[] 		= {  1, 0,          2, 0,          3, 0, 999};
-int horizontal4_occupied[] 		= {  0, -1, 0, 1,   1, -1, 1, 1,   2, -1, 2, 1,    3, -1, 3, 1,  -1, 0, +4, 0,  999};
+int dogleg4_down_occupied[] 	= { -0, -1,			0, 1, 1, 2,     2, 0, 1, 2, 1, 0,		999};
+int dogleg4_down_alternate[] 	= { -1, 0,          3,  1,          	 					999};
 
 int square4_empty[] 			= {  1, 0,          0, 1,          1, 1, 999};
 int square4_occupied[] 			= {  0, -1, 1, -1,  0,  2, 1, 2,  -1, 0, -1, 1,    2, 0, 2, 1,  999};
+
+int snake_up_empty[] 			= {  0, -1,          1, -1,          1, -2, 		2, -2,		999};
+int snake_up_occupied[] 		= {  -1, 0, -1, -1, 0, -2,  1, -3, 2, -3,   3, -2, 2, -1, 1, 0, 0, 1, 999};
+
+int
+board_match_shape(board *b, int x, int y, int *empty, int *occupied, int *alternate){
+	if(board_match(b, x, y, empty, occupied, alternate, 0)) return 1;
+	if(board_match(b, x, y, empty, occupied, alternate, 1)) return 1;
+	return 0;
+}
 
 int
 board_solvable_custom(board *b){
 	for(int y = 0; y < b->height; y++){
 		for(int x = 0, w = b->width; x < w; x++){
 			if(board_get_piece(b, x, y) == 0){
-				if(board_match_shape(b, x, y, vertical4_open_empty, vertical4_open_occupied, NULL, 0)){
+				if(board_match_shape(b, x, y, linear4_open_empty, linear4_open_occupied, linear4_open_alternate)){
 					return 0;
 				}
-				if(board_match_shape(b, x, y, vertical4_open_empty, vertical4_open_occupied, NULL, 1)){
+				if(board_match_shape(b, x, y, dogleg4_up_empty, dogleg4_up_occupied, dogleg4_up_alternate)){
 					return 0;
 				}
-				if(board_match_shape(b, x, y, dogleg4_up_empty, dogleg4_up_occupied, NULL, 0)){
+				if(board_match_shape(b, x, y, dogleg4_down_empty, dogleg4_down_occupied, NULL)){
 					return 0;
 				}
-				if(board_match_shape(b, x, y, dogleg4_up_empty, dogleg4_up_occupied, NULL, 1)){
+				if(board_match_shape(b, x, y, snake_up_empty, snake_up_occupied, NULL)){
+					// printf("snake %d %d\n", x, y);
 					return 0;
 				}
-				if(board_match_shape(b, x, y, dogleg4_down_empty, dogleg4_down_occupied, NULL, 0)){
-					return 0;
-				}
-				if(board_match_shape(b, x, y, dogleg4_down_empty, dogleg4_down_occupied, NULL, 1)){
-					return 0;
-				}
-				if(board_match_shape(b, x, y, square4_empty, square4_occupied, NULL, 0)){
+				// the square is symmetrical
+				if(board_match(b, x, y, square4_empty, square4_occupied, NULL, 0)){
 					return 0;
 				}
 			}
@@ -273,7 +313,7 @@ board_solvable(board *b){
 		   board_get_piece(b, 0, 0) > board_get_piece(b, b->width - 1, b->height - 1)) return 0;
 	}
 
-	if(b->optimisations >= 1){
+	if(b->optimisations >= 2){
 		board_clear_regions(b);
 
 		for(int y = 0, h = b->height; y < h; y++){
@@ -284,12 +324,12 @@ board_solvable(board *b){
 					board_region_propagate(b, x, y, b->region_count);
 
 					if(b->region_size[b->region_count] < 4) return 0;
-					if(b->optimisations >= 3) if(b->region_size[b->region_count] == 7) return 0;
+					if(b->optimisations >= 4) if(b->region_size[b->region_count] == 7) return 0;
 				}
 			}
 		}
 
-		if(b->optimisations >= 4){
+		if(b->optimisations >= 3){
 			if(b->debug){
 				printf("%2d: ", b->region_count);
 				for(int region = 1, end = b->region_count; region <= end; region++){
@@ -317,8 +357,12 @@ board_write(board *b){
 	for(int y = 0; y < b->height; y++){
 		for(int x = 0; x < b->width; x++){
 			int piece_id = board_get_piece(b, x, y) - 1;
-			piece *p = &b->pieces[piece_id];
-			fprintf(b->output_fp, "%s", p->abbreviation);
+			if(piece_id >= 0){
+				piece *p = &b->pieces[piece_id];
+				fprintf(b->output_fp, "%s", p->abbreviation);
+			}else{
+				fprintf(b->output_fp, "-");
+			}
 		}
 	}
 
@@ -326,6 +370,16 @@ board_write(board *b){
 	fprintf(b->output_fp, "\n");
 
 	if(b->solutions % 100 == 0) fflush(b->output_fp);
+}
+
+int
+board_position_is_hole(board *b, int x, int y){
+	if(board_position_occupied(b, x, y)) return 0;
+	if(board_position_occupied(b, x - 1, y) == 0) return 0;
+	if(board_position_occupied(b, x + 1, y) == 0) return 0;
+	if(board_position_occupied(b, x, y - 1) == 0) return 0;
+	if(board_position_occupied(b, x, y + 1) == 0) return 0;
+	return 1;
 }
 
 int
@@ -346,7 +400,19 @@ board_place_piece(board *b, piece *p, orientation *ori, int x, int y){
 		int yy = y + ori->position[pp][1];
 		board_set_piece(b, xx, yy, p->id);
 	}
-	return 0;
+
+	ForEachPosition(pp, ori){
+		int xx = x + ori->position[pp][0];
+		int yy = y + ori->position[pp][1];
+		if(board_position_is_hole(b, xx - 1, yy) ||
+		   board_position_is_hole(b, xx + 1, yy) ||
+		   board_position_is_hole(b, xx, yy + 1) ||
+		   board_position_is_hole(b, xx, yy + 1)){
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 int
@@ -377,9 +443,9 @@ board_new(int w, int h, piece *p){
 int
 board_solve_propagate(board *b, int depth){
 	if(b->debug) board_print(b);
-
+	b->search_calls[depth]++;
 	if(depth == LEN(pieces)){
-		if(board_solved(b)){
+		if(b->optimisations == 0 || board_solved(b)){
 			b->solutions++;
 
 			if(b->print_frequency && (b->solutions % b->print_frequency) == 0){
@@ -401,19 +467,21 @@ board_solve_propagate(board *b, int depth){
 		}else{
 
 			ForEachOrientation(ori, p){
+				// if(depth == 0) printf("depth 0 orientation %ld\n", ori - p->orientation);
 				for(int y = 0, h = b->height - ori->height + 1; y < h; y++){
 					for(int x = 0, w = b->width - ori->width + 1; x < w; x++){
 
 						if(board_valid_piece_position(b, p, ori, x, y)){
-							board_place_piece(b, p, ori, x, y);
+							if(board_place_piece(b, p, ori, x, y)){
 
-							if(board_solvable(b)){
-								board_solve_propagate(b, depth + 1);
-							}else if(b->debug){
-								printf("rejected\n");
-								board_print(b);
+								if(board_solvable(b)){
+									// if(depth == 0) printf("prop at %d %d\n", x, y);
+									board_solve_propagate(b, depth + 1);
+								}else if(b->debug){
+									printf("rejected\n");
+									board_print(b);
+								}
 							}
-
 							board_remove_piece(b, p, ori, x, y);
 						}
 					}
@@ -428,6 +496,10 @@ board_solve_propagate(board *b, int depth){
 int
 board_solve(board *b){
 	board_solve_propagate(b, 0);
+
+	for(int i = 0; i <= LEN(pieces); i++){
+		printf("%2d %12lld\n", i, b->search_calls[i]);
+	}
 
 	return 0;
 }
@@ -448,25 +520,31 @@ board_disable_pieces(board *b, char *abbrevs){
 }
 
 void
-iqfit_usage(){
-	fprintf(stderr, "usage: iqfit [options]\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "solve problems from the iqfit puzzle\n");
-	fprintf(stderr, "  -p n       print every n'th solution (default: 100)\n");
-	fprintf(stderr, "  -t n       terminate after the n'th solution (default: none)\n");
-	fprintf(stderr, "  -d         show every step of solving the board (default: off)\n");
-	fprintf(stderr, "  -a         toggle advanced search heuristics (default: on)\n");
-	fprintf(stderr, "  -On        optimisation level 0-4 (default: 4)\n");
-	fprintf(stderr, "  -o file    print all solutions to file (default: none)\n");
-	fprintf(stderr, "  -i file    read solutions from the specified file (default: none)\n");
-	fprintf(stderr, "  -S file    solve examples (default: none)\n");
-	fprintf(stderr, "  -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n");
-	fprintf(stderr, "  -s         only generate the non-symmetry related solutions\n");
-	fprintf(stderr, "  -H         print information about the pieces\n");
-	fprintf(stderr, "  -h         print this message\n");
-	fprintf(stderr, "\n");
-	fprintf(stderr, "default behaviour is to enumerate all solutions, using all optimisations\n");
-	fprintf(stderr, "Copyright (C) Mike Hartshorn, 2024\n");
+board_usage(){
+	fprintf(stderr, "\
+usage: iqfit [options]\n\
+\n\
+solve problems from the iqfit puzzle\n\
+  -p n       print every n'th solution                              (default: 1000)\n\
+  -t n       terminate after the n'th solution                      (default: none)\n\
+  -d         show every step of solving the board                   (default: off)\n\
+  -On        optimisation level 0-4                                 (default: 10!)\n\
+  -o file    print all solutions to file                            (default: none)\n\
+  -i file    read solutions from the specified file                 (default: none)\n\
+  -S file    solve examples from the specified file                 (default: none)\n\
+  -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
+  -s         only generate the non-symmetry related solutions\n\
+  -h         print this message\n\
+\n\
+default behaviour is to enumerate all solutions, using all optimisations\n\
+\n\
+  -O0        disable all optimisations, and allow solutions that include gaps\n\
+  -O1        generate all solutions that don't include any gaps\n\
+  -O2        skip partial solutions that include 1, 2 or 3 size gaps\n\
+  -O3        skip partial solutions that include some impossible shapes\n\
+  -O4        skip partial solutions that include size 7 gaps\n\
+\n\
+Copyright (C) Mike Hartshorn, 2024\n");
 
 	exit(1);
 }
@@ -475,7 +553,7 @@ int
 board_parse_args(board *b, int argc, char **argv){
 	int c;
 
-	while ((c = getopt(argc, argv, "D:sO:i:o:S:p:t:d0ah")) != -1) {
+	while ((c = getopt(argc, argv, "D:sO:i:o:S:p:t:dv0h")) != -1) {
 		switch (c) {
 		case 'i': b->input_filename = optarg; break;
 		case 'o': b->output_filename = optarg; break;
@@ -483,12 +561,13 @@ board_parse_args(board *b, int argc, char **argv){
 		case 'p': b->print_frequency = atoi(optarg); break;
 		case 't': b->terminate = atoi(optarg); break;
 		case 'd': b->debug++; break;
+		case 'v': b->verbose++; break;
 		case 'a': b->advanced = 1 - b->advanced; break;
 		case 's': b->no_symmetry = 1 - b->no_symmetry; break;
 		case 'O': b->optimisations = atoi(optarg); break;
 		case 'D': board_disable_pieces(b, optarg); break;
-		case 'h': iqfit_usage(); break;
-		default: iqfit_usage(); break;
+		case 'h': board_usage(); break;
+		default: board_usage(); break;
 		}
 	}
 
@@ -578,9 +657,10 @@ board_solve_examples(board *b){
 
 int
 main(int argc, char **argv) {
-	initialise_pieces();
 
 	board *b = board_new(BOARD_WIDTH, BOARD_HEIGHT, pieces);
+
+	initialise_pieces(b);
 
 	board_parse_args(b, argc, argv);
 

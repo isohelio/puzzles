@@ -17,6 +17,8 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define LEN(x)	(sizeof(x)/sizeof(x[0]))
 
+typedef unsigned long long piece_hash;
+
 typedef struct orientation {
 	int position[16][2];
 	int position_count;
@@ -97,6 +99,7 @@ typedef struct board {
 	int region_pieces[BOARD_WIDTH][BOARD_HEIGHT];
 	int region_size[BOARD_WIDTH * BOARD_HEIGHT];
 	int region_count;
+	unsigned long long search_calls[128];
 	int width;
 	int height;
 	piece *pieces;
@@ -105,6 +108,7 @@ typedef struct board {
 	int print_frequency;
 	int terminate;
 	int debug;
+	int verbose;
 	int advanced;
 	int optimisations;
 	int total_placements;
