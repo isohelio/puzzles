@@ -5,7 +5,7 @@
 #define ForEachPosition(p, ori) for(int p = 0, end = ori->position_count; p < end; p++)
 
 piece_hash
-piece_generate_hash(int *xy, int count){
+generate_piece_hash(int *xy, int count){
 	piece_hash hash = 0;
 	int xmin = INT32_MAX, ymin = INT32_MAX;
 

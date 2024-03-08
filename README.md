@@ -54,7 +54,28 @@ The software should run on any linux type system with gcc.
     -O3        skip partial solutions that include some impossible shapes
     -O4        skip partial solutions that include size 7 gaps
 
+### Solve Puzzles
 
+Partial solutions can be provided using a simple text file format, which consists of 
+
+* a title
+* 5 lines of 10 characters using the piece abbreviations
+* unfilled positions can be indicated with a - or _ character
+
+There are examples in the examples folder e.g.
+
+        EXPERT-49
+        ----------
+        YY--b---G-
+        YY--b---GG
+        Y---b---G-
+        Y---bb----
+
+To solve the puzzle run
+
+        ./iqfit -S examples/examples.txt -p 1
+
+Speciy -o filename to capture the puzzle solutions to a text file.
 
 ### Results
 
