@@ -553,6 +553,7 @@ solve problems from the iqfit puzzle\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
   -P         print description of the IQ FIT pieces\n\
+  -v         print some information during processing\n\
   -h         print this message\n\
 \n\
 default behaviour is to enumerate all solutions, using all optimisations\n\
