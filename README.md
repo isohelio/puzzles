@@ -75,6 +75,9 @@ To solve the puzzle run
 
         ./iqfit -S examples/examples.txt -p 1
 
+![image](https://github.com/isohelio/puzzles/assets/38924166/404b84f9-71d0-4883-a004-3b5d0908dee8)
+
+
 Speciy -o filename to capture the puzzle solutions to a text file.
 
 ### Results
