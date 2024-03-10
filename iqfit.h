@@ -24,6 +24,7 @@ typedef struct orientation {
 	int position_count;
 	int width;
 	int height;
+	piece_hash hash;
 } orientation;
 
 typedef struct piece {
@@ -98,6 +99,7 @@ typedef struct board {
 	int *region_id;
 	int region_pieces[BOARD_WIDTH][BOARD_HEIGHT];
 	int region_size[BOARD_WIDTH * BOARD_HEIGHT];
+	int region_points[4 * BOARD_WIDTH * BOARD_HEIGHT];
 	int region_count;
 	unsigned long long search_calls[128];
 	int width;

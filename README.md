@@ -4,7 +4,7 @@ There are many like it, but this one is mine.
 
 ### Introduction
 
-A straight forward, recursive search algorithm for finding all solutions of the IQ FIT puzzle.
+A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
 
 ### Installation
 
@@ -139,7 +139,7 @@ Total solutions with gaps
 
 ### Output Format
 
-The solutions can be captured in an output file, specified with the -o option.
+The solutions can be captured in an output file, specified with the `-o` option.
 
 The solutions are stored one per line, printed from the top left corner. The piece positions are indicated using the piece abbreviation. A few lines from the file are shown below
 

@@ -15,10 +15,13 @@ generate_piece_hash(int *xy, int count){
 	}
 
 	for(int i = 0; i < count; i += 2){
+		// printf("%d %d\n", xy[i], xy[i + 1]);
 		int bit = xy[i] - xmin;
 		int word = xy[i + 1] - ymin;
 		hash |= (piece_hash)((piece_hash)1 << ((8 * word) + bit));
 	}
+
+	// printf("hash %lld\n", hash);
 
 	return hash;
 }
@@ -77,6 +80,8 @@ initialise_piece(board *b, piece *p){
 					}
 				}
 			}
+
+			ori->hash = generate_piece_hash((int *)&ori->position, ori->position_count * 2);
 		}
 	}
 
@@ -195,6 +200,8 @@ void
 board_region_propagate(board *b, int x, int y, int region){
 	if(board_get_piece(b, x, y) == 0 && board_get_region(b, x, y) == 0){
 		board_set_region(b, x, y, region);
+		// b->region_points[2*b->region_size[region]] = x;
+		// b->region_points[2*b->region_size[region] + 1] = y;
 		b->region_size[region]++;
 		if(y - 1 >= 0) 			board_region_propagate(b, x,     y - 1, region);
 		if(x - 1 >= 0) 			board_region_propagate(b, x - 1, y,     region);
@@ -277,20 +284,20 @@ board_solvable_custom(board *b){
 				if(board_match_shape(b, x, y, linear4_open_empty, linear4_open_occupied, linear4_open_alternate)){
 					return 0;
 				}
-				if(board_match_shape(b, x, y, dogleg4_up_empty, dogleg4_up_occupied, dogleg4_up_alternate)){
-					return 0;
-				}
-				if(board_match_shape(b, x, y, dogleg4_down_empty, dogleg4_down_occupied, NULL)){
-					return 0;
-				}
-				if(board_match_shape(b, x, y, snake_up_empty, snake_up_occupied, NULL)){
-					// printf("snake %d %d\n", x, y);
-					return 0;
-				}
+				// if(board_match_shape(b, x, y, dogleg4_up_empty, dogleg4_up_occupied, dogleg4_up_alternate)){
+				// 	return 0;
+				// }
+				// if(board_match_shape(b, x, y, dogleg4_down_empty, dogleg4_down_occupied, NULL)){
+				// 	return 0;
+				// }
+				// if(board_match_shape(b, x, y, snake_up_empty, snake_up_occupied, NULL)){
+				// 	// printf("snake %d %d\n", x, y);
+				// 	return 0;
+				// }
 				// the square is symmetrical
-				if(board_match(b, x, y, square4_empty, square4_occupied, NULL, 0)){
-					return 0;
-				}
+				// if(board_match(b, x, y, square4_empty, square4_occupied, NULL, 0)){
+				// 	return 0;
+				// }
 			}
 		}
 	}
@@ -325,6 +332,11 @@ board_solvable(board *b){
 
 					if(b->region_size[b->region_count] < 4) return 0;
 					if(b->optimisations >= 4) if(b->region_size[b->region_count] == 7) return 0;
+
+					if(board_match_shape(b, x, y, linear4_open_empty, linear4_open_occupied, linear4_open_alternate)){
+						return 0;
+					}
+
 				}
 			}
 		}
@@ -339,7 +351,7 @@ board_solvable(board *b){
 			}
 
 			for(int region = 1, end = b->region_count; region <= end; region++){
-				if(b->region_size[region] == 4) {
+				if(b->region_size[region] >= 4 && b->region_size[region] <= 6) {
 					if(board_solvable_custom(b) == 0){
 						return 0;
 					}
@@ -443,7 +455,9 @@ board_new(int w, int h, piece *p){
 int
 board_solve_propagate(board *b, int depth){
 	if(b->debug) board_print(b);
-	b->search_calls[depth]++;
+	
+	// b->search_calls[depth]++;
+
 	if(depth == LEN(pieces)){
 		if(b->optimisations == 0 || board_solved(b)){
 			b->solutions++;
@@ -466,11 +480,16 @@ board_solve_propagate(board *b, int depth){
 			board_solve_propagate(b, depth + 1);
 		}else{
 
-			ForEachOrientation(ori, p){
-				// if(depth == 0) printf("depth 0 orientation %ld\n", ori - p->orientation);
-				for(int y = 0, h = b->height - ori->height + 1; y < h; y++){
-					for(int x = 0, w = b->width - ori->width + 1; x < w; x++){
-
+			for(int y = 0, h = b->height - 1; y < h; y++){
+				for(int x = 0, w = b->width - 1; x < w; x++){
+					if(board_get_piece(b, x, y) != 0 &&
+					   board_get_piece(b, x + 1, y) != 0 &&
+					   board_get_piece(b, x, y + 1) != 0){
+						continue;
+					}
+					ForEachOrientation(ori, p){
+						if(x >= b->width - ori->width + 1) continue;
+						if(y >= b->height - ori->height + 1) continue;
 						if(board_valid_piece_position(b, p, ori, x, y)){
 							if(board_place_piece(b, p, ori, x, y)){
 
@@ -487,6 +506,27 @@ board_solve_propagate(board *b, int depth){
 					}
 				}
 			}
+			// ForEachOrientation(ori, p){
+			// 	// if(depth == 0) printf("depth 0 orientation %ld\n", ori - p->orientation);
+			// 	for(int y = 0, h = b->height - ori->height + 1; y < h; y++){
+			// 		for(int x = 0, w = b->width - ori->width + 1; x < w; x++){
+
+			// 			if(board_valid_piece_position(b, p, ori, x, y)){
+			// 				if(board_place_piece(b, p, ori, x, y)){
+
+			// 					if(board_solvable(b)){
+			// 						// if(depth == 0) printf("prop at %d %d\n", x, y);
+			// 						board_solve_propagate(b, depth + 1);
+			// 					}else if(b->debug){
+			// 						printf("rejected\n");
+			// 						board_print(b);
+			// 					}
+			// 				}
+			// 				board_remove_piece(b, p, ori, x, y);
+			// 			}
+			// 		}
+			// 	}
+			// }
 		}
 	}
 
@@ -497,9 +537,11 @@ int
 board_solve(board *b){
 	board_solve_propagate(b, 0);
 
-	// for(int i = 0; i <= LEN(pieces); i++){
-	// 	printf("%2d %12lld\n", i, b->search_calls[i]);
-	// }
+	if(b->verbose){
+		for(int i = 0; i <= LEN(pieces) + 1; i++){
+			printf("%2d %12lld\n", i, b->search_calls[i]);
+		}
+	}
 
 	return 0;
 }
@@ -509,7 +551,7 @@ board_disable_pieces(board *b, char *abbrevs){
 	for(int i = 0; i < strlen(abbrevs); i++){
 		piece *p = board_get_piece_from_abbreviation(b, abbrevs[i]);
 		if(p){
-			printf("disabling %c id %d\n", abbrevs[i], p->id);
+			printf("disabling %s %c id %d\n", p->name, abbrevs[i], p->id);
 			p->inactive = 1;
 		}else{
 			printf("no such piece as %c\nexiting\n", abbrevs[i]);
