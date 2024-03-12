@@ -1,7 +1,11 @@
-import re, argparse, sys
+import re, argparse, sys, math
 from collections import defaultdict
+import png
 
-colours = {'B': 34, 'C': 96, 'G': 32, 'O': 33, 'P': 35, 'R': 31, 'Y': 93, 'b': 94, 'g': 92, 'p': 95}
+terminal_colours = {'B': 34, 'C': 96, 'G': 32, 'O': 33, 'P': 35, 'R': 31, 'Y': 93, 'b': 94, 'g': 92, 'p': 95}
+rgb_colours = { 'B': [0, 0, 255], 'C': [0, 255, 255], 'G': [0, 200, 0], 'O': [255, 165, 0], 'P': [91, 64, 96],
+                'R': [255, 0, 0], 'Y': [255, 255, 0], 'b': [130, 130, 255], 'g': [100, 255, 100], 'p': [252, 45, 222],
+                '_': [240, 240, 240]}
 
 class Iqfit:
 
@@ -98,7 +102,7 @@ class Iqfit:
         print("")
 
     def format_cell(self, c):
-        if c in colours: return "\033[%sm%s\033[0m" % (colours[c], c)
+        if c in terminal_colours: return "\033[%sm%s\033[0m" % (terminal_colours[c], c)
         else: return "-"
 
 
@@ -117,9 +121,49 @@ class Iqfit:
                 f.write("%s %s\n" % (solution[0], str(solution[1])))
 
 
-    def write_png(self, solutions, filename, width=1920):
-        
-        pass
+
+    def get_xy(self, s, c, r, x, y):
+        column = s % self.columns
+        row = s // self.columns
+
+        x = column * (10 + 1) + 1 + x
+        y = row * (5 + 1) + 1 + y
+        return (x, y)
+
+
+    def set_pixel(self, s, c, r, x, y, rgb):
+        xy = self.get_xy(s, c, r, x, y)
+        pos = xy[0] + self.image_width * xy[1]
+        self.buffer[pos] = rgb
+        # self.buffer[pos + 1] = 128
+        # self.buffer[pos + 2] = 128
+
+    def configure_image(self, solutions, columns, gap):
+        rows = math.ceil(len(solutions) / columns)
+        self.gap = gap
+        self.columns = columns
+        self.rows = rows
+        self.image_width = (10 + 1) * columns
+        self.image_height = (5 + 1) * rows
+        self.buffer = [0] * self.image_width * self.image_height * 1
+
+        self.palette = [[255, 255, 255] for i in range(0, 256)]
+        for c in rgb_colours:
+            self.palette[ord(c[0])] = rgb_colours[c]
+
+    def write_image(self, solutions, filename, columns=100, gap=2):
+        self.configure_image(solutions, columns, gap)
+        print(len(solutions), self.rows, self.image_width, self.image_height)
+        f = open(filename, 'wb')
+
+        for s, solution in enumerate(solutions):
+            pos = 0
+            for y in range(0, 5):
+                for x in range(0, 10):
+                    self.set_pixel(s, 0, 0, x, y, ord(solution[pos]))
+                    pos += 1
+
+        png.Writer(self.image_width, self.image_height, palette=self.palette).write_array(f, self.buffer)
 
 
     def generate_solutions(self):
@@ -149,14 +193,29 @@ class Iqfit:
 
         parser.add_argument("--max", action='store', help="Maximum number of solutions to process", type=int, default=-1)
         parser.add_argument("--columns", action='store', help="Number of columns in formatted output", type=int, default=5)
-        parser.add_argument("--format", action='store', help="File to format.")
+
+        parser.add_argument("--format", action='store_true', help="File to format.")
+        parser.add_argument("--two", action='store_true', help="Produce two piece single solution puzzles.")
+        parser.add_argument("--image", action='store_true', help="File to generate image for.")
+        parser.add_argument("--input", action='store', help="Input file.", default="solutions.txt")
+        parser.add_argument("--output", action='store', help="Output file for image generation.")
 
         self.args = parser.parse_args(argv)
-
+        print(self.args)
         if self.args.format:
-            self.read_solutions(self.args.format)
+            self.read_solutions(self.args.input)
 
             self.print_solutions(self.solutions, self.args.columns, self.args.max)
+        elif self.args.image:
+            if not self.args.output: self.args.output = "solutions.png"
+            self.read_solutions(self.args.input)
+
+            self.write_image(self.solutions, self.args.output, columns=self.args.columns)
+        elif self.args.two:
+            self.read_solutions(self.args.input)
+
+
+
 
 def main():
     iqfit = Iqfit()
