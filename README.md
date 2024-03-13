@@ -186,4 +186,11 @@ The Python helper program can generate the start points with two or three pieces
                           --output solutions/two_piece_solutions.txt --dedup
 
 The `--dedup` option deduplicates the output by removing one pair of each of the solutions that are related by 180&deg; rotation of the board.
+There are 13789 puzzles with two pieces that generate a single solution. A small sample is shown below.
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/50c83377-c887-4436-be5d-d74e63dcc78d)
+
+Use the `--three` option to generate all three piece puzzles that have a unique solution.
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/584ae245-af6e-4a36-8ef8-e909f27166e0)
 
