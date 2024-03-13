@@ -144,6 +144,14 @@ Total solutions with gaps
 
     total solutions 6462189, invalid solutions 0
 
+### Solving Puzzles Without Using A Specified Piece
+
+There are a maximum of 56 nodes available from the 10 pieces. Therefore the 50 holes in the puzzle can be solved by omitting one piece.
+
+Puzzle pieces can be deactivated using the `-D` flag e.g. to solve the puzzle without the cyan (C) piece
+
+    ./iqfit -DC -p1
+
 ### Output Format
 
 The solutions can be captured in an output file, specified with the `-o` option.
