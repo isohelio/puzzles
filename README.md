@@ -58,7 +58,7 @@ The software should run on any linux type system with gcc.
 
 ### Piece definitions
 
-The IQ FIT pieces are currently hard wired into the software (see `iqfit.h`). Each piece has 2 layouts which correspond to the ways the piece can be inserted into the board.
+The IQ FIT pieces are currently hard wired into the software (see [`iqfit.h`](https://github.com/isohelio/puzzles/blob/main/iqfit.h)). Each piece has 2 layouts which correspond to the ways the piece can be inserted into the board.
 
 Most of the colours are self explanatory 
 but the blue colour names have been taken to coincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
