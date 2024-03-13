@@ -189,7 +189,7 @@ The `--dedup` option deduplicates the output by removing one pair of each of the
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/50c83377-c887-4436-be5d-d74e63dcc78d)
 
-Use the `--three` option to generate all three piece puzzles that have a unique solution. There are 1209312 three piece solutions.
+Use the `--three` option to generate all three piece puzzles that have a unique solution. There are 1209312 [three piece](https://github.com/isohelio/puzzles/blob/main/solutions/three_piece_solutions.txt) solutions.
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/584ae245-af6e-4a36-8ef8-e909f27166e0)
 
