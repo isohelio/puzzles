@@ -24,17 +24,6 @@ class Iqfit:
         print(len(self.solutions), self.pieces)
 
 
-    def get_one_piece_solutions(self):
-        solutions = []
-        for piece in self.pieces:
-            pattern = "[^" + piece + "]"
-            regex = re.compile(pattern)
-            for solution in self.solutions:
-                solution = regex.sub("_", solution)
-                solutions.append(solution)
-
-        return solutions
-
     def get_three_piece_solutions(self):
         solutions = []
         for i, piece1 in enumerate(self.pieces):
