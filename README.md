@@ -162,3 +162,7 @@ The image generation parts of this require the python `png` module which is inst
 
         pip install pypng
 
+
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/49262361-a43c-4c71-bf52-0569e980f08b)
+
