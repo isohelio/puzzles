@@ -196,28 +196,6 @@ class Iqfit:
         png.Writer(self.image_width, self.image_height, palette=self.palette).write_array(f, self.buffer)
 
 
-    def generate_solutions(self):
-        # self.print_solutions(self.solutions[:40])
-        # return
-        # one_piece_solutions = self.get_one_piece_solutions()
-
-        # one_piece_solutions = self.count_solutions(one_piece_solutions)
-
-        # self.summarise_solutions(one_piece_solutions)
-
-        two_piece_solutions = self.get_two_piece_solutions()
-        print(len(two_piece_solutions))
-        two_piece_solutions = self.count_solutions(two_piece_solutions)
-        
-        two_piece_single_solutions = [s for s in two_piece_solutions if s[1] == 1]
-
-        print(len(two_piece_single_solutions))
-        self.summarise_solutions(two_piece_single_solutions)
-        # self.print_solutions(two_piece_single_solutions)
-
-        self.write_solutions(two_piece_single_solutions, "two_piece_solutions.txt")
-
-
     def process_arguments(self, argv):
         parser = argparse.ArgumentParser()
 
@@ -278,9 +256,6 @@ def main():
     iqfit = Iqfit()
 
     iqfit.process_arguments(sys.argv[1:])
-    # iqfit.read_solutions("solutions.txt")
-
-    # iqfit.generate_solutions()
     
 if __name__ == "__main__":
     main()
