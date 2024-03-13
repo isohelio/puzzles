@@ -168,7 +168,7 @@ With the `--image` option you can generate a png of all the solutions in a file.
 
 The images are a bit hard to handle but are quite neat to look at. The images have one pixel per section of the piece. Unfilled pieces are shown with a light grey checker board pattern.
 
-*Note that the default Photo Viewer in Windows 11 will not display these images correctly. It insists on interpolating the colours as you zoom in. ImageGlass will display them correctly.
+*Note that the default Photo Viewer in Windows 11 will not display these images correctly. It insists on interpolating the colours as you zoom in. ImageGlass will display them correctly.*
 
 
     python iqfit.py --image --input solutions/solutions.txt \
@@ -185,8 +185,7 @@ The Python helper program can generate the start points with two or three pieces
     python iqfit.py --two --input solutions/solutions.txt \
                           --output solutions/two_piece_solutions.txt --dedup
 
-The `--dedup` option deduplicates the output by removing one pair of each of the solutions that are related by 180&deg; rotation of the board.
-There are 13789 puzzles with two pieces that generate a single solution. A small sample is shown below.
+The `--dedup` option deduplicates the output by removing one pair of each of the solutions that are related by 180&deg; rotation of the board. There are 13789 puzzles with [two pieces](https://github.com/isohelio/puzzles/blob/main/solutions/two_piece_solutions.txt) that generate a single solution. A small sample is shown below.
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/50c83377-c887-4436-be5d-d74e63dcc78d)
 
