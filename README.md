@@ -178,4 +178,11 @@ Here is a section from the full solution set image.
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/49262361-a43c-4c71-bf52-0569e980f08b)
 
+### Generate Two and Three Piece Start Points With Unique Solutions
+
+The Python helper program can generate the start points with two or three pieces that have a unique solution
+
+    python iqfit.py --two --input solutions/solutions.txt --output solutions/two_piece_solutions.txt --dedup
+
+The `--dedup` option deduplicates the output by removing one pair of each of the solutions that are related by 180&deg; rotation of the board.
 
