@@ -182,7 +182,8 @@ Here is a section from the full solution set image.
 
 The Python helper program can generate the start points with two or three pieces that have a unique solution
 
-    python iqfit.py --two --input solutions/solutions.txt --output solutions/two_piece_solutions.txt --dedup
+    python iqfit.py --two --input solutions/solutions.txt \
+                          --output solutions/two_piece_solutions.txt --dedup
 
 The `--dedup` option deduplicates the output by removing one pair of each of the solutions that are related by 180&deg; rotation of the board.
 
