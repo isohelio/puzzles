@@ -154,7 +154,7 @@ The solutions are stored one per line, printed from the top left corner. The pie
 
 The single solution per line format is convenient for working with the solutions in command line tools.
 
-## Python Helper Program
+### Python Helper Program
 
 Most solution analyses are done with Python as it is mainly just reading the single line solution output files.
 
@@ -164,4 +164,6 @@ The image generation parts of this require the python `png` module which is inst
 
 ### Generate PNG Image of Solutions
 
-python iqfit.py
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/49262361-a43c-4c71-bf52-0569e980f08b)
+
