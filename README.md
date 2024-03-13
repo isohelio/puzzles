@@ -10,7 +10,7 @@ A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
 
 ### Installation
 
-The software should run on any linux type system with gcc.
+The software should run on any linux type system with `gcc` and `Python` for some post processing.
 
 1. Clone/download the repo.
 2. Run make in the repo folder, which should produce output like this
