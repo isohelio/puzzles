@@ -685,25 +685,40 @@ board_solve_examples(board *b){
 	b->print_frequency = 1;
 
 	while(fgets(line, 4096, fp)){
-		if(strncmp(line, "exit", 4) == 0) break;
 		board_reset(b);
+		if(strncmp(line, "exit", 4) == 0) break;
 
-		printf("%s", line);
-		for(int y = 0, h = b->height; y < h; y++){
-			if(fgets(line, 4096, fp) == NULL){
-				printf("incomplete puzzle\nexiting\n");
-				exit(3);
-			}
-
-			for(int x = 0, w = b->width; x < w; x++){
+		if(strlen(line) > 50){
+			for(int x = 0, w = b->width * b->height; x < w; x++){
 				char c = line[x];
 				piece *p = board_get_piece_from_abbreviation(b, c);
 				if(p){
-					board_set_piece(b, x, y, p->id);
+					board_set_piece(b, x % b->width, x / b->width, p->id);
 					p->inactive = 1;
 				}else if(c != '_' && c != '-' && c != ' '){
 					printf("invalid piece: %c\nexiting\n", c);
 					exit(4);
+				}
+			}
+		}else{
+
+			printf("%s", line);
+			for(int y = 0, h = b->height; y < h; y++){
+				if(fgets(line, 4096, fp) == NULL){
+					printf("incomplete puzzle\nexiting\n");
+					exit(3);
+				}
+
+				for(int x = 0, w = b->width; x < w; x++){
+					char c = line[x];
+					piece *p = board_get_piece_from_abbreviation(b, c);
+					if(p){
+						board_set_piece(b, x, y, p->id);
+						p->inactive = 1;
+					}else if(c != '_' && c != '-' && c != ' '){
+						printf("invalid piece: %c\nexiting\n", c);
+						exit(4);
+					}
 				}
 			}
 		}

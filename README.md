@@ -124,6 +124,8 @@ Output will look like this
 
 Specify `-o filename` to capture the puzzle solutions to a text file.
 
+Alternatively if the title line is longer than 50 characters it is interpreted as a single line solution format.
+
 ### Results
 
 Total solutions without gaps
