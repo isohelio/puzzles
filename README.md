@@ -152,6 +152,11 @@ Puzzle pieces can be deactivated using the `-D` flag e.g. to solve the puzzle wi
 
     ./iqfit -DC -p1
 
+This produces the following solutions.
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/a3a3fd02-7a44-4d74-9e4f-b8918f57d828)
+
+
 ### Output Format
 
 The solutions can be captured in an output file, specified with the `-o` option.
