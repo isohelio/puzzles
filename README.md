@@ -171,7 +171,8 @@ The images are a bit hard to handle but are quite neat to look at. The images ha
 *Note that the default Photo Viewer in Windows 11 will not display these images correctly. It insists on interpolating the colours as you zoom in. ImageGlass will display them correctly.
 
 
-    python iqfit.py --image --input solutions/solutions.txt --columns 500 --output solutions/solutions.png
+    python iqfit.py --image --input solutions/solutions.txt \
+              --columns 500 --output solutions/solutions.png
 
 Here is a section from the full solution set image.
 
