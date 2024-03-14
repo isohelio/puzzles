@@ -131,7 +131,7 @@ Alternatively if the title line is longer than 50 characters it is interpreted a
 
 ### Results
 
-Total solutions without gaps
+Total [solutions](https://github.com/isohelio/puzzles/blob/main/solutions/solutions.txt) without gaps
 
 
     iqfit -p 1000
