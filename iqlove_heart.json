@@ -1,0 +1,154 @@
+{
+    "width":    12,
+    "height":   12,
+    "step":     2,
+    "flip_pieces": 1,
+    "board":    [
+        "XXXXX______X",
+        "XXXX________",
+        "XXXX________",
+        "XXXX________",
+        "X___________",
+        "____________",
+        "____________",
+        "____________",
+        "____________",
+        "____________",
+        "____________",
+        "X___________"
+    ],
+    "pieces": [
+        {
+            "name": "red", "abbreviation": "R", "colour": "31", "rgb": "230,0,28",
+            "shape": [ 0, 0,  2, 0,  2, 1,  1, 1,  0, 2 ],
+            "layout": [
+                [
+                    "XXXX",
+                    "XXXX",
+                    "X___",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "orange", "abbreviation": "O", "colour": "33", "rgb": "255,193,80",
+            "shape": [ 0, 0,  1, 0,  2, 1,  2, 2,  2, 3,  0, 1 ],
+            "layout": [
+                [
+                    "XX__",
+                    "XXX_",
+                    "_XXX",
+                    "__XX",
+                    "___X",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "lightgreen", "abbreviation": "g", "colour": "92", "rgb": "194,205,90",
+            "shape": [ 0, 0,  1, 0,  2, 0,  2, 1,  1, 1,  1, 2,  1, 3,  0, 2,  0, 1 ],
+            "layout": [
+                [
+                    "XXXX",
+                    "XXXX",
+                    "XX__",
+                    "XX__",
+                    "_X__",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "green", "abbreviation": "G", "colour": "32", "rgb": "0,100,100",
+            "shape": [ 0, 0,  3, 0,  2, 1,  0, 1 ],
+            "layout": [
+                [
+                    "XX",
+                    "XX",
+                    "XX",
+                    "XX",
+                    "_X",
+                    "__"
+                ]
+            ]
+        },
+        {
+            "name": "yellow", "abbreviation": "Y", "colour": "93", "rgb": "255,255,160",
+            "shape": [ 0, 0,  1, 0,  2, 0,  3, 0,  2, 1,  1, 1,  1, 2,  0, 1 ],
+            "layout": [
+                [
+                    "XXXXX_",
+                    "XXXX__",
+                    "_X____",
+                    "______"
+                ]
+            ]
+        },
+        {
+            "name": "cyan", "abbreviation": "C", "colour": "96", "rgb": "0,201,255", "symmetric" : 1,
+            "shape": [ 0, 0,  2, 0,  3, 1,  1, 1 ],
+            "layout": [
+                [
+                    "_XXX__",
+                    "__XXX_"
+                ]
+            ]
+        },
+        {
+            "name": "lightblue", "abbreviation": "b", "colour": "94", "rgb": "0,182,255",
+            "shape": [ 0, 0,  3, 0,  3, 1,  2, 2 ],
+            "layout": [
+                [
+                    "XX__",
+                    "XXX_",
+                    "XXX_",
+                    "XX__",
+                    "X___",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "blue", "abbreviation": "B", "colour": "34", "rgb": "0,84,202",
+            "shape": [ 0, 0,  2, 0,  1, 1,  1, 3,  0, 2 ],
+            "layout": [
+                [
+                    "XXX_",
+                    "XX__",
+                    "XX__",
+                    "XX__",
+                    "_X__",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "pink", "abbreviation": "p", "colour": "95", "rgb": "243,116,187",
+            "shape": [ 0, 0,  1, 0,  1, 1,  2, 2,  1, 3,  0, 2 ],
+            "layout": [
+                [
+                    "XX__",
+                    "XX__",
+                    "XX__",
+                    "XXX_",
+                    "_XX_",
+                    "____"
+                ]
+            ]
+        },
+        {
+            "name": "purple", "abbreviation": "P", "colour": "35", "rgb": "47,0,156",
+            "shape": [ 0, 0,  2, 0,  3, 1,  2, 2 ],
+            "layout": [
+                [
+                    "____",
+                    "_XX_",
+                    "XXX_",
+                    "XX__",
+                    "X___",
+                    "____"
+                ]
+            ]
+        }
+    ]
+}

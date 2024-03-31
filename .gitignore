@@ -3,3 +3,10 @@
 .vscode/settings.json
 .gitignore
 .project
+a.out
+test.c
+cJSON.o
+iqlove.o
+pdfgen.o
+output.pdf
+iqlove

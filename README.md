@@ -2,6 +2,8 @@
 
 There are many like it, but this one is mine.
 
+*Documentation currently does not match the software.*
+
 ### Introduction
 
 A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
@@ -189,7 +191,6 @@ With the `--image` option you can generate a png of all the solutions in a file.
 The images are a bit hard to handle but are quite neat to look at. The images have one pixel per section of the piece. Unfilled pieces are shown with a light grey checker board pattern.
 
 *Note that the default Photo Viewer in Windows 11 will not display these images correctly. It insists on interpolating the colours as you zoom in. ImageGlass will display them correctly.*
-
 
     python iqfit.py --image --input solutions/solutions.txt \
               --columns 500 --output solutions/solutions.png

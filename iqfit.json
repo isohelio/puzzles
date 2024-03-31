@@ -1,0 +1,77 @@
+{
+    "width":    10,
+    "height":   5,
+    "step":     1,
+    "pieces": [
+        {
+            "name": "red", 		"colour": "31", "abbreviation": "R", "rgb": "230,0,28",
+            "layout": [ [   "****",
+                            "*  *"],
+                        [   "   *",
+                            "****"] ]
+        },
+        {
+            "name": "orange",		"colour": "33", "abbreviation": "O", "rgb": "255,193,80",
+            "layout": [ [   " * *",
+                            "****"],
+                        [   "  * ",
+                            "****"] ]
+        },
+        {
+            "name": "yellow", 	"colour": "93", "abbreviation": "Y", "rgb": "255,255,160",
+            "layout": [ [   "*   ",
+                            "****"],
+                        [    "**  ",
+                            "****"] ]
+        },
+        {
+            "name": "cyan",		"colour": "96", "abbreviation": "C", "rgb": "0,201,255",
+            "layout": [ [   "  * ",
+                            "****"],
+                        [   " ** ",
+                            "****"] ]
+        },
+        {
+            "name": "lightblue",	"colour": "94", "abbreviation": "b", "rgb": "0,182,255",
+            "layout":   [ [ "* * ",
+                            "****"],
+                        [   "   *",
+                            "****"] ]
+        },
+        {
+            "name": "pink",		"colour": "95", "abbreviation": "p", "rgb": "243,116,187",
+            "layout":   [ [ " *  ",
+                            "****"],
+                        [   "  **",
+                            "****"] ]
+        },
+        {
+            "name": "lightgreen",	"colour": "92", "abbreviation": "g", "rgb": "194,205,90",
+            "layout":   [ [ "* *",
+                            "***"],
+                        [   "  *",
+                            "***"] ]
+        },
+        {
+            "name": "blue",		"colour": "34", "abbreviation": "B", "rgb": "0,84,202",
+            "layout":   [ [ "* *",
+                            "***"],
+                        [   " * ",
+                            "***"] ]
+        },
+        {
+            "name": "green",		"colour": "32", "abbreviation": "G", "rgb": "0,100,100",
+            "layout":   [ [ " * ",
+                            "***"],
+                        [   " **",
+                            "***"] ]
+        },
+        {
+            "name": "purple",		"colour": "35", "abbreviation": "P", "rgb": "47,0,156",
+            "layout":   [ [ "** ",
+                            "***"],
+                        [   "*  ",
+                            "***"] ]
+        }
+    ]
+}

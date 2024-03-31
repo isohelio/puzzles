@@ -13,6 +13,15 @@
 //#include <time.h>
 //#include <locale.h>
 
+#include "cJSON.h"
+#include "pdfgen.h"
+
+#define BOARD_MAX_PIECES		10
+#define BOARD_MAX_ORIENTATIONS	32
+#define BOARD_MAX_POSITIONS		32
+#define BOARD_MAX_OUTLINES		32
+#define BOARD_MAX_LAYOUTS		32
+
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define LEN(x)	(sizeof(x)/sizeof(x[0]))
@@ -20,81 +29,43 @@
 typedef unsigned long long piece_hash;
 
 typedef struct orientation {
-	int position[16][2];
+	int position[BOARD_MAX_POSITIONS][2];
 	int position_count;
 	int width;
 	int height;
 	piece_hash hash;
 } orientation;
 
-typedef struct piece {
-	char *name;						// piece name, the colour
-	char *colour;					// the linux terminal colour escape code
-	char *abbreviation;				// single letter abbreviation for the piece
-	char *layout[2][2];				// the different layouts for each piece
-	orientation orientation[16];	// the piece orientations for all layouts
-	int orientation_count;			// number of orientations
-	int id;							// integer id that is used for tracking board positions
-	int inactive;					// piece is not active in the search
-} piece;
+typedef struct piece_layout {
+	char lines[256][10];
+	int line_count;
+} piece_layout;
 
-piece pieces[] = {
-		{ "red", 		"31", "R", {	{"****",
-								  	  	 "*  *"},
-										{"   *",
-										 "****"},}
-		},
-		{ "orange",		"33", "O", {	{" * *",
-										 "****"},
-										{"  * ",
-										 "****"}, }
-		},
-		{ "yellow", 	"93", "Y", {	{"*   ",
-										 "****"},
-										{"**  ",
-										 "****"}, }
-		},
-		{ "cyan",		"96", "C", {	{"  * ",
-										 "****"},
-										{" ** ",
-										 "****"}, }
-		},
-		{ "lightblue",	"94", "b", {	{"* * ",
-										 "****"},
-										{"   *",
-										 "****"}, }
-		},
-		{ "pink",		"95", "p", {	{" *  ",
-										 "****"},
-										{"  **",
-										 "****"},}
-		},
-		{ "lightgreen",	"92", "g", {	{"* *",
-										 "***"},
-										{"  *",
-										 "***"},}
-		},
-		{ "blue",		"34", "B", {	{"* *",
-										 "***"},
-										{" * ",
-										 "***"},}
-		},
-		{ "green",		"32", "G", {	{" * ",
-										 "***"},
-										{" **",
-										 "***"},}
-		},
-		{ "purple",		"35", "P", {	{"** ",
-										 "***"},
-										{"*  ",
-										 "***"}, }
- 		},
-};
+typedef struct piece {
+	char *name;											// piece name, the colour
+	char *colour;										// the linux terminal colour escape code
+	char *abbreviation;									// single letter abbreviation for the piece
+	piece_layout layout[BOARD_MAX_LAYOUTS];
+	int layout_count;
+	// char *layout[2][2];									// the different layouts for each piece
+	orientation orientation[BOARD_MAX_ORIENTATIONS];	// the piece orientations for all layouts
+	int orientation_count;								// number of orientations
+	int id;												// integer id that is used for tracking board positions
+	int inactive;										// piece is not active in the search
+	float outline[BOARD_MAX_OUTLINES];					// outline of the pieces for iqlove
+	int outline_count;									// number of points in the outline (*2)
+	unsigned int rgb_fill;								// fill colour of piece in ARGB
+	unsigned int rgb_outline;							// outline colour of piece in ARGB
+	int symmetric;										// does the piece have rotational symmetry
+} piece;
 
 #define BOARD_WIDTH		10
 #define BOARD_HEIGHT	5
 
 typedef struct board {
+	piece pieces[BOARD_MAX_PIECES];
+	int piece_count;
+	int flip_pieces;
 	int *piece_id;
 	int *region_id;
 	int region_pieces[BOARD_WIDTH][BOARD_HEIGHT];
@@ -104,7 +75,7 @@ typedef struct board {
 	unsigned long long search_calls[128];
 	int width;
 	int height;
-	piece *pieces;
+	int step;
 	int solutions;
 	int invalid_solutions;
 	int print_frequency;
@@ -116,6 +87,7 @@ typedef struct board {
 	int total_placements;
 	int solution_placements;
 	int no_symmetry;
+	char *config_filename;
 	char *output_filename;
 	char *input_filename;
 	char *solve_filename;

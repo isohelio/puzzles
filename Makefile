@@ -3,10 +3,19 @@ CFLAGS = -O4 -DNDEBUG -Wall -march=native -fomit-frame-pointer
 
 CC = gcc
 
-all: iqfit
+O = iqfit.o cJSON.o pdfgen.o
 
-iqfit: iqfit.o iqfit.h
-		gcc -o iqfit iqfit.o $(CFLAGS) -lm
+OLOVE = iqlove.o cJSON.o pdfgen.o
+
+$O $(OLOVE): iqfit.h
+
+all: iqfit iqlove
+
+iqfit: $O iqfit.h
+		gcc -o iqfit $O $(CFLAGS) -lm
+
+iqlove: $(OLOVE) iqfit.h
+		gcc -o iqlove $(OLOVE) $(CFLAGS) -lm
 
 clean:
 	rm -f *.o *.obj *.exe *.stackdump gmon.out

@@ -101,10 +101,10 @@ class Iqfit:
                 print(" %-20d" % n, end="")
             print("")
 
-            for i in range(0, 5):
+            for i in range(0, self.args.height):
                 for solution in chunk:
-                    for j in range(0, 10):
-                        c = solution[i * 10 + j]
+                    for j in range(0, self.args.width):
+                        c = solution[i * self.args.width + j]
                         print(" " + self.format_cell(c), end="")
                     print(" ", end="")
                 print("")
@@ -114,6 +114,7 @@ class Iqfit:
         print("")
 
     def format_cell(self, c):
+        if c == 'X': return " "
         if c in terminal_colours: return "\033[%sm%s\033[0m" % (terminal_colours[c], c)
         else: return "-"
 
@@ -124,7 +125,7 @@ class Iqfit:
         for c in solution[:50]:
             pos += 1
             print(" " + self.format_cell(c), end="")
-            if pos % 10 == 0: print("")
+            if pos % self.args.width == 0: print("")
 
 
     def write_solutions(self, solutions, filename):
@@ -142,8 +143,8 @@ class Iqfit:
     def rotate_180(self, solution):
         rotated = ""
         pos = 50
-        for y in range(0, 5):
-            for x in range(0, 10):
+        for y in range(0, self.args.height):
+            for x in range(0, self.args.width):
                 pos -= 1
                 c = solution[pos]
                 rotated += c
@@ -157,8 +158,8 @@ class Iqfit:
         column = s % self.columns
         row = s // self.columns
 
-        x = column * (10 + 1) + 1 + x
-        y = row * (5 + 1) + 1 + y
+        x = column * (self.args.width + 1) + 1 + x
+        y = row * (self.args.height + 1) + 1 + y
         return (x, y)
 
 
@@ -173,8 +174,8 @@ class Iqfit:
         self.gap = gap
         self.columns = columns
         self.rows = rows
-        self.image_width = (10 + 1) * columns + 1
-        self.image_height = (5 + 1) * rows + 1
+        self.image_width = (self.args.width + 1) * columns + 1
+        self.image_height = (self.args.width + 1) * rows + 1
         self.buffer = [0] * self.image_width * self.image_height
 
         self.palette = [[255, 255, 255] for i in range(0, 256)]
@@ -189,8 +190,8 @@ class Iqfit:
 
         for s, solution in enumerate(solutions):
             pos = 0
-            for y in range(0, 5):
-                for x in range(0, 10):
+            for y in range(0, self.args.height):
+                for x in range(0, self.args.width):
                     c = solution[pos]
                     if (x + y) % 2 == 0 and c == '_': c = '-' 
                     self.set_pixel(s, 0, 0, x, y, ord(c))
@@ -202,6 +203,8 @@ class Iqfit:
     def process_arguments(self, argv):
         parser = argparse.ArgumentParser()
 
+        parser.add_argument("--width", action='store', help="Width of puzzle", type=int, default=10)
+        parser.add_argument("--height", action='store', help="Height of puzzle", type=int, default=5)
         parser.add_argument("--max", action='store', help="Maximum number of solutions to process", type=int, default=-1)
         parser.add_argument("--columns", action='store', help="Number of columns in formatted output", type=int, default=5)
         parser.add_argument("--dedup", action='store_true', help="Deduplicate", default=False)
