@@ -2,8 +2,6 @@
 
 There are many like it, but this one is mine.
 
-*Documentation currently does not match the software.*
-
 ### Introduction
 
 A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
@@ -39,6 +37,7 @@ The software should run on any linux type system with `gcc` and `Python` for som
     usage: iqfit [options]
 
     solve problems from the iqfit puzzle
+        -g file    configuration for the game                             (default: iqfit.json)
         -p n       print every n'th solution                              (default: 1000)
         -t n       terminate after the n'th solution                      (default: none)
         -d         show every step of solving the board                   (default: off)
@@ -58,9 +57,9 @@ The software should run on any linux type system with `gcc` and `Python` for som
         -O3        skip partial solutions that include some impossible shapes
         -O4        skip partial solutions that include size 7 gaps
 
-### Piece definitions
+### Game Configuration
 
-The IQ FIT pieces are currently hard wired into the software (see [`iqfit.h`](https://github.com/isohelio/puzzles/blob/main/iqfit.h)). Each piece has 2 layouts which correspond to the ways the piece can be inserted into the board.
+The IQFIT pieces and board are now specified in a `.json` configuration file. The configuration can be specified with the -g option. The default is for the original IQFIT game and is contained in `configurations/iqfit.json`.
 
 Most of the colours are self explanatory 
 but the blue colour names have been taken to coincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
