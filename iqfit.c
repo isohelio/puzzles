@@ -216,7 +216,7 @@ initialise_piece_geometrical(board *b, piece *p){
 }
 
 void
-initialise_pieces(board *b){
+board_initialise_pieces(board *b){
 	int i = 0;
 	ForEachPiece(p){
 		initialise_piece(b, p);
@@ -643,7 +643,7 @@ json_get_string(cJSON *object, char *key, int default_allowed, char *default_val
 board *
 board_new(int w, int h){
 	board *b = calloc(1, sizeof(board));
-	b->config_filename 	= "configurations/iqfit.json";
+	b->config_filename 	= "config/iqfit.json";
 	b->method 			= "default";
 	b->print_frequency 	= 1000;
 	b->terminate 		= INT32_MAX;
@@ -869,7 +869,7 @@ board_usage(){
 Usage: iqfit [options]\n\
 \n\
 Solve problems from the iqfit puzzle.\n\
-  -g file    configuration for the game                             (default: configurations/iqfit.json)\n\
+  -g file    configuration for the game                             (default: config/iqfit.json)\n\
   -p n       print every n'th solution                              (default: 1000)\n\
   -t n       terminate after the n'th solution                      (default: none)\n\
   -d         show every step of solving the board                   (default: off)\n\
@@ -900,7 +900,7 @@ int
 board_parse_args(board *b, int argc, char **argv){
 	int c;
 
-	while ((c = getopt(argc, argv, "g:D:sO:i:o:S:p:t:dv0hP")) != -1) {
+	while ((c = getopt(argc, argv, "g:D:sO:i:o:S:p:t:dv0h")) != -1) {
 		switch (c) {
 		case 'g': b->config_filename = optarg; break;
 		case 'i': b->input_filename = optarg; break;
@@ -1035,9 +1035,8 @@ main(int argc, char **argv) {
 
 	board_parse_args(b, argc, argv);
 
-	initialise_pieces(b);
+	board_initialise_pieces(b);
 
-		printf("solve\n");
 	if(b->input_filename){
 		board_process_solutions(b);
 	}else if(b->solve_filename){
