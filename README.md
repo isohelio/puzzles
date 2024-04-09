@@ -66,7 +66,6 @@ The IQFIT pieces and board are now specified in a `.json` configuration file. Th
 
 Most of the colours are self explanatory but the blue colour names have been taken to coincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
 
-
 ```
 {
     "width":    10,
