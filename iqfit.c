@@ -864,25 +864,6 @@ board_disable_pieces(board *b, char *abbrevs){
 }
 
 void
-board_print_pieces(board *b){
-	printf("piece information, piece name, abbreviation and terminal colour code\n\n");
-	ForEachPiece(p){
-		for(int r = 0; r < p->layout_count; r++){
-			piece_layout *layout = p->layout + r;
-			if(r == 0) printf("%2d %-12s ", p->id, p->name);
-			else printf("   %1s %2s         ", p->abbreviation, p->colour);
-			for(int l = 0; l < p->layout_count; l++){
-				char *s = layout->lines[r];
-				printf("%s  ", s);
-			}
-			printf("\n");
-		}
-		printf("\n");	
-	}
-	exit(0);
-}
-
-void
 board_usage(){
 	fprintf(stderr, "\
 Usage: iqfit [options]\n\
@@ -899,7 +880,6 @@ Solve problems from the iqfit puzzle.\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
   -m method  specify alternate method (currently only 'bitmap')     (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
-  -P         print description of the IQ FIT pieces\n\
   -v         print some information during processing\n\
   -h         print this message\n\
 \n\
@@ -935,7 +915,6 @@ board_parse_args(board *b, int argc, char **argv){
 		case 'O': b->optimisations = atoi(optarg); break;
 		case 'm': b->method = optarg; break;
 		case 'D': board_disable_pieces(b, optarg); break;
-		case 'P': board_print_pieces(b); break;
 		case 'h': board_usage(); break;
 		default: board_usage(); break;
 		}

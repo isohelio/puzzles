@@ -62,43 +62,92 @@ The software should run on any linux type system with `gcc` and `Python` for som
 
 ### Game Configuration
 
-The IQFIT pieces and board are now specified in a `.json` configuration file. The configuration can be specified with the -g option. The default is for the original IQFIT game and is contained in `configurations/iqfit.json`.
+The IQFIT pieces and board are now specified in a `.json` configuration file. The configuration can be specified with the -g option. The default is for the original IQFIT game and is contained in [`configurations/iqfit.json`](https://github.com/isohelio/puzzles/blob/main/configurations/iqfit.json).
 
 Most of the colours are self explanatory 
 but the blue colour names have been taken to coincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
 
-You can view the piece definitions with `./iqfit -P`.
+You can view the piece definitions in the configuration file.
 
-
-        1 red          ****     *
-          R 31         *  *  ****
-
-        2 orange        * *    *
-          O 33         ****  ****
-
-        3 yellow       *     **
-          Y 93         ****  ****
-
-        4 cyan           *    **
-          C 96         ****  ****
-
-        5 lightblue    * *      *
-          b 94         ****  ****
-
-        6 pink          *      **
-          p 95         ****  ****
-
-        7 lightgreen   * *    *
-          g 92         ***  ***
-
-        8 blue         * *   *
-          B 34         ***  ***
-
-        9 green         *    **
-          G 32         ***  ***
-
-        10 purple       **   *
-           P 35         ***  ***
+```
+{
+    "width":    10,
+    "height":   5,
+    "step":     1,
+    "pieces": [
+        {
+            "name": "red", 		"colour": "31", "abbreviation": "R", "rgb": "230,0,28",
+            "layout": [ [   "****",
+                            "*  *"],
+                        [   "   *",
+                            "****"] ]
+        },
+        {
+            "name": "orange",		"colour": "33", "abbreviation": "O", "rgb": "255,193,80",
+            "layout": [ [   " * *",
+                            "****"],
+                        [   "  * ",
+                            "****"] ]
+        },
+        {
+            "name": "yellow", 	"colour": "93", "abbreviation": "Y", "rgb": "255,255,160",
+            "layout": [ [   "*   ",
+                            "****"],
+                        [    "**  ",
+                            "****"] ]
+        },
+        {
+            "name": "cyan",		"colour": "96", "abbreviation": "C", "rgb": "0,201,255",
+            "layout": [ [   "  * ",
+                            "****"],
+                        [   " ** ",
+                            "****"] ]
+        },
+        {
+            "name": "lightblue",	"colour": "94", "abbreviation": "b", "rgb": "0,182,255",
+            "layout":   [ [ "* * ",
+                            "****"],
+                        [   "   *",
+                            "****"] ]
+        },
+        {
+            "name": "pink",		"colour": "95", "abbreviation": "p", "rgb": "243,116,187",
+            "layout":   [ [ " *  ",
+                            "****"],
+                        [   "  **",
+                            "****"] ]
+        },
+        {
+            "name": "lightgreen",	"colour": "92", "abbreviation": "g", "rgb": "194,205,90",
+            "layout":   [ [ "* *",
+                            "***"],
+                        [   "  *",
+                            "***"] ]
+        },
+        {
+            "name": "blue",		"colour": "34", "abbreviation": "B", "rgb": "0,84,202",
+            "layout":   [ [ "* *",
+                            "***"],
+                        [   " * ",
+                            "***"] ]
+        },
+        {
+            "name": "green",		"colour": "32", "abbreviation": "G", "rgb": "0,100,100",
+            "layout":   [ [ " * ",
+                            "***"],
+                        [   " **",
+                            "***"] ]
+        },
+        {
+            "name": "purple",		"colour": "35", "abbreviation": "P", "rgb": "47,0,156",
+            "layout":   [ [ "** ",
+                            "***"],
+                        [   "*  ",
+                            "***"] ]
+        }
+    ]
+}
+```
 
 ### Solve Puzzles
 
