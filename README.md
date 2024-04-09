@@ -62,12 +62,11 @@ The software should run on any linux type system with `gcc` and `Python` for som
 
 ### Game Configuration
 
-The IQFIT pieces and board are now specified in a `.json` configuration file. The configuration can be specified with the -g option. The default is for the original IQFIT game and is contained in [`configurations/iqfit.json`](https://github.com/isohelio/puzzles/blob/main/configurations/iqfit.json).
+The IQFIT pieces and board are now specified in a `.json` configuration file. The configuration can be specified with the -g option. The default is for the original IQFIT game and is contained in [`configurations/iqfit.json`](https://github.com/isohelio/puzzles/blob/main/configurations/iqfit.json). You can view the piece definitions in the configuration file.
 
 Most of the colours are self explanatory 
 but the blue colour names have been taken to coincide with the physical pieces rather than the instruction manual. The colours are specified in linux terminal escape code colour numbers.
 
-You can view the piece definitions in the configuration file.
 
 ```
 {
