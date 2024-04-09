@@ -40,7 +40,7 @@ The software should run on any linux type system with `gcc` and `Python` for som
     usage: iqfit [options]
 
     solve problems from the iqfit puzzle
-        -g file    configuration for the game                             (default: configurations/iqfit.json)
+        -g file    configuration for the game                             (default: config/iqfit.json)
         -p n       print every n'th solution                              (default: 1000)
         -t n       terminate after the n'th solution                      (default: none)
         -d         show every step of solving the board                   (default: off)
