@@ -15,7 +15,7 @@ The software should run on any linux type system with `gcc` and `Python` for som
 1. Clone/download the repo.
 
         git clone https://github.com/isohelio/puzzles
-        
+
 2. Run make in the repo folder, which should produce output like this
     
         > make clean all
@@ -40,7 +40,7 @@ The software should run on any linux type system with `gcc` and `Python` for som
     usage: iqfit [options]
 
     solve problems from the iqfit puzzle
-        -g file    configuration for the game                             (default: iqfit.json)
+        -g file    configuration for the game                             (default: configurations/iqfit.json)
         -p n       print every n'th solution                              (default: 1000)
         -t n       terminate after the n'th solution                      (default: none)
         -d         show every step of solving the board                   (default: off)
