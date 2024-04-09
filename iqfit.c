@@ -748,17 +748,8 @@ board_configure(board *b){
 
 int
 board_solve_propagate(board *b, int depth){
-	// if(depth == 5) return 0;
-	// if(depth == 2) board_print(b);
 	if(b->debug) board_print(b);
 	
-	// if(depth == 2) board_print(b);
-
-	// if(
-		// board_get_piece(b, 2, 6) == 1 && board_get_piece(b, 0, 9) == 1
-	// && board_get_piece(b, 6, 6) == 2 && board_get_piece(b, 2, 9) == 2 
-	//    && board_get_piece(b, 11, 8) == 4 && board_get_piece(b, 9, 6) == 3 
-	//    ) board_print(b);
 	b->search_calls[depth]++;
 
 	if(depth == b->piece_count){
@@ -920,9 +911,7 @@ board_parse_args(board *b, int argc, char **argv){
 		}
 	}
 
-	// if(b->config_filename){
-		board_configure(b);
-	// }
+	board_configure(b);
 
 	if(b->output_filename)
 		b->output_fp = board_fopen(b->output_filename, "w");
@@ -937,7 +926,6 @@ board_process_solution(board *b, char *solution){
 		for(int x = 0, w = b->width; x < w; x++){
 			char c = solution[pos++];
 			piece *p = board_get_piece_from_abbreviation(b, c);
-//			printf("abbrev %c id %d\n", c, p->id);
 			b->region_pieces[x][y] |= (1 << p->id);
 		}
 	}
@@ -1025,6 +1013,9 @@ board_solve_examples(board *b){
 
 int
 board_solve_bitmap(board *b){
+
+	// board_solve_bitmap_propagate(b, 0);
+
 	return 0;
 }
 
