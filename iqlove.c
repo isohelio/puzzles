@@ -901,6 +901,7 @@ Solve problems from the iqfit puzzle.\n\
   -i file    read solutions from the specified file                 (default: none)\n\
   -S file    solve examples from the specified file                 (default: none)\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
+  -m method  specify alternate method (currently only 'bitmap')     (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
   -P         print description of the IQ FIT pieces\n\
   -v         print some information during processing\n\
@@ -936,6 +937,7 @@ board_parse_args(board *b, int argc, char **argv){
 		case 'a': b->advanced = 1 - b->advanced; break;
 		case 's': b->no_symmetry = 1 - b->no_symmetry; break;
 		case 'O': b->optimisations = atoi(optarg); break;
+		case 'm': b->method = optarg; break;
 		case 'D': board_disable_pieces(b, optarg); break;
 		case 'P': board_print_pieces(b); break;
 		case 'h': board_usage(); break;
@@ -1067,6 +1069,8 @@ main(int argc, char **argv) {
 	// 	board_process_geometrical(b);
 	}else if(b->solve_filename){
 		board_solve_examples(b);
+	}else if(strcmp(b->method, "bitmap") == 0){
+		board_solve_bitmap(b);
 	}else{
 		board_solve(b);
 

@@ -3,7 +3,7 @@
     "height":   10,
     "step":     2,
     "flip_pieces": 1,
-    "board2":    [
+    "board_not_used":    [
         "XXXXX______X",
         "XXXX________",
         "XXXX________",

@@ -26,6 +26,8 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define LEN(x)	(sizeof(x)/sizeof(x[0]))
 
+typedef unsigned long long board_bitmap;
+
 typedef unsigned long long piece_hash;
 
 typedef struct orientation {
@@ -87,6 +89,7 @@ typedef struct board {
 	int total_placements;
 	int solution_placements;
 	int no_symmetry;
+	char *method;
 	char *config_filename;
 	char *output_filename;
 	char *input_filename;
