@@ -1,6 +1,5 @@
 #include "iqfit.h"
 
-
 #define ForEachPiece(p) for(piece *p = b->pieces; p < b->pieces + b->piece_count; p++)
 #define ForEachOrientation(o, p) for(orientation *o = p->orientation, *end = p->orientation + p->orientation_count; o < end; o++)
 #define ForEachPosition(p, ori) for(int p = 0, end = ori->position_count; p < end; p++)
