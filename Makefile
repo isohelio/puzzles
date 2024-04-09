@@ -1,5 +1,5 @@
 CFLAGS = -O4 -DNDEBUG -Wall -march=native -fomit-frame-pointer -Ilibs
-# CFLAGS = -pg -g -Wall -DNDEBUG -march=native
+# CFLAGS = -pg -g -Wall -DNDEBUG -march=native -Ilibs
 
 CC = gcc
 
