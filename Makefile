@@ -12,3 +12,9 @@ iqfit: $O iqfit.h
 
 clean:
 	rm -f *.o *.obj *.exe *.stackdump gmon.out libs/*.o libs/*.obj
+
+solve-iqlove-heart:
+	./iqfit -g config/iqlove_heart.json -t 100 -p 1 -O6
+
+solve-iqfit:
+	./iqfit -g config/iqfit.json -t 1 -p 1
