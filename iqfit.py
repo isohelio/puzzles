@@ -217,7 +217,9 @@ class Iqfit:
         parser.add_argument("--output", action='store', help="Output file for image generation.")
 
         self.args = parser.parse_args(argv)
+
         print(self.args)
+
         if self.args.format:
             self.read_solutions(self.args.input)
 
@@ -253,9 +255,6 @@ class Iqfit:
             print(len(two_piece_single_solutions))
 
             self.write_solutions(two_piece_single_solutions, self.args.output)
-
-
-
 
 
 def main():
