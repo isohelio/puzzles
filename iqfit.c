@@ -203,7 +203,7 @@ initialise_piece_geometrical(board *b, piece *p){
 		// ori->hash = generate_piece_hash((int *)&ori->position, ori->position_count * 2);
 	}
 
-	pdf_test(b);
+	// pdf_test(b);
 
 	if(b->verbose){
 		printf("orientations %d\n", p->orientation_count);
@@ -237,10 +237,22 @@ board_fopen(char *filename, char *mode){
 }
 
 #define board_index(b,x,y)				((y)*b->width + (x))
-#define board_get_piece(b,x,y) 			b->piece_id[board_index(b,x,y)]
-#define board_set_piece(b,x,y,piece)	b->piece_id[board_index(b,x,y)] = piece
+#define board_get_piece_id(b,x,y) 		b->piece_id[board_index(b,x,y)]
+#define board_set_piece_id(b,x,y,piece)	b->piece_id[board_index(b,x,y)] = piece
 #define board_get_region(b,x,y)			b->region_id[board_index(b,x,y)]
 #define board_set_region(b,x,y,region)	b->region_id[board_index(b,x,y)] = region
+
+piece *
+board_get_piece(board *b, int x, int y){
+	int c = board_get_piece_id(b, x, y);
+
+	if(c > 0 && c <= b->piece_count) {
+		return &b->pieces[c-1];
+	}
+
+	return NULL;
+}
+
 
 void
 board_reset(board *b){
@@ -248,7 +260,7 @@ board_reset(board *b){
 	b->invalid_solutions = 0;
 	for(int y = 0; y < b->height; y++){
 		for(int x = 0; x < b->width; x++){
-			board_set_piece(b, x, y, 0);
+			board_set_piece_id(b, x, y, 0);
 			board_set_region(b, x, y, 0);
 		}
 	}
@@ -258,7 +270,7 @@ board_reset(board *b){
 
 char *
 board_format_cell(board *b, int x, int y, char *buf){
-	int c = board_get_piece(b, x, y);
+	int c = board_get_piece_id(b, x, y);
 	if(c >= b->piece_count + 1) {
 		// sprintf(buf, "X");
 		sprintf(buf, " ");
@@ -304,7 +316,7 @@ int
 board_solved(board *b){
 	for(int y = 0, h = b->height; y < h; y++){
 		for(int x = 0, w = b->width; x < w; x++){
-			if(board_get_piece(b, x, y) == 0) return 0;
+			if(board_get_piece_id(b, x, y) == 0) return 0;
 		}
 	}
 
@@ -315,7 +327,7 @@ int
 board_position_occupied(board *b, int ix, int iy){
 	if(ix < 0 || ix >= b->width || iy < 0 || iy >= b->height){
 		return 1;
-	}else if(board_get_piece(b, ix, iy) != 0){
+	}else if(board_get_piece_id(b, ix, iy) != 0){
 		return 1;
 	}
 	return 0;
@@ -323,7 +335,7 @@ board_position_occupied(board *b, int ix, int iy){
 
 void
 board_region_propagate(board *b, int x, int y, int region){
-	if(board_get_piece(b, x, y) == 0 && board_get_region(b, x, y) == 0){
+	if(board_get_piece_id(b, x, y) == 0 && board_get_region(b, x, y) == 0){
 		board_set_region(b, x, y, region);
 		// b->region_points[2*b->region_size[region]] = x;
 		// b->region_points[2*b->region_size[region] + 1] = y;
@@ -405,7 +417,7 @@ int
 board_solvable_custom(board *b){
 	for(int y = 0; y < b->height; y++){
 		for(int x = 0, w = b->width; x < w; x++){
-			if(board_get_piece(b, x, y) == 0){
+			if(board_get_piece_id(b, x, y) == 0){
 				if(board_match_shape(b, x, y, linear4_open_empty, linear4_open_occupied, linear4_open_alternate)){
 					return 0;
 				}
@@ -475,7 +487,7 @@ board_solvable(board *b){
 
 	if(b->no_symmetry){
 		if(board_position_occupied(b, 0, 0) && board_position_occupied(b, b->width - 1, b->height -1) &&
-		   board_get_piece(b, 0, 0) > board_get_piece(b, b->width - 1, b->height - 1)) return 0;
+		   board_get_piece_id(b, 0, 0) > board_get_piece_id(b, b->width - 1, b->height - 1)) return 0;
 	}
 
 	if(b->optimisations >= 2){
@@ -483,7 +495,7 @@ board_solvable(board *b){
 
 		for(int y = 0, h = b->height; y < h; y++){
 			for(int x = 0, w = b->width; x < w; x++){
-				if(board_get_piece(b, x, y) == 0 && board_get_region(b, x, y) == 0){
+				if(board_get_piece_id(b, x, y) == 0 && board_get_region(b, x, y) == 0){
 					b->region_size[++b->region_count] = 0;
 
 					board_region_propagate(b, x, y, b->region_count);
@@ -526,7 +538,7 @@ void
 board_write(board *b){
 	for(int y = 0; y < b->height; y++){
 		for(int x = 0; x < b->width; x++){
-			int piece_id = board_get_piece(b, x, y) - 1;
+			int piece_id = board_get_piece_id(b, x, y) - 1;
 			if(piece_id > b->piece_count + 1){
 				fprintf(b->output_fp, "X");
 			}else if(piece_id >= 0 && piece_id <= b->piece_count + 1){
@@ -560,7 +572,7 @@ board_valid_piece_position(board *b, piece *p, orientation *ori, int x, int y){
 	ForEachPosition(pp, ori){
 		int xx = x + ori->position[pp][0];
 		int yy = y + ori->position[pp][1];
-		if(board_get_piece(b, xx, yy) != 0) return 0;
+		if(board_get_piece_id(b, xx, yy) != 0) return 0;
 	}
 
 	return 1;
@@ -571,7 +583,7 @@ board_place_piece(board *b, piece *p, orientation *ori, int x, int y){
 	ForEachPosition(pp, ori){
 		int xx = x + ori->position[pp][0];
 		int yy = y + ori->position[pp][1];
-		board_set_piece(b, xx, yy, p->id);
+		board_set_piece_id(b, xx, yy, p->id);
 	}
 
 	// ForEachPosition(pp, ori){
@@ -593,7 +605,7 @@ board_remove_piece(board *b, piece *p, orientation *ori, int x, int y){
 	ForEachPosition(pp, ori){
 		int xx = x + ori->position[pp][0];
 		int yy = y + ori->position[pp][1];
-		board_set_piece(b, xx, yy, 0);
+		board_set_piece_id(b, xx, yy, 0);
 	}
 	return 0;
 }
@@ -650,6 +662,7 @@ board_new(int w, int h){
 	b->terminate 		= INT32_MAX;
 	b->advanced 		= 1;
 	b->optimisations 	= 10;
+	b->space_characters = " -_X";
 	return b;
 }
 
@@ -777,9 +790,9 @@ board_solve_propagate(board *b, int depth){
 
 			// for(int y = 0, h = b->height - 1; y < h; y += b->step){
 			// 	for(int x = 0, w = b->width - 1; x < w; x += b->step){b
-			// 		if(board_get_piece(b, x, y) != 0 &&
-			// 		   board_get_piece(b, x + 1, y) != 0 &&
-			// 		   board_get_piece(b, x, y + 1) != 0){
+			// 		if(board_get_piece_id(b, x, y) != 0 &&
+			// 		   board_get_piece_id(b, x + 1, y) != 0 &&
+			// 		   board_get_piece_id(b, x, y + 1) != 0){
 			// 			continue;
 			// 		}
 			// 		ForEachOrientation(ori, p){
@@ -869,6 +882,7 @@ Solve problems from the iqfit puzzle.\n\
   -o file    print all solutions to file                            (default: none)\n\
   -i file    read solutions from the specified file                 (default: none)\n\
   -S file    solve examples from the specified file                 (default: none)\n\
+  -P file    filename for PDF output                                (default: none)\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
   -m method  specify alternate method (currently only 'bitmap')     (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
@@ -892,12 +906,13 @@ int
 board_parse_args(board *b, int argc, char **argv){
 	int c;
 
-	while ((c = getopt(argc, argv, "g:D:sO:i:o:S:p:t:dv0h")) != -1) {
+	while ((c = getopt(argc, argv, "P:g:D:sO:i:o:S:p:t:dv0h")) != -1) {
 		switch (c) {
 		case 'g': b->config_filename = optarg; break;
 		case 'i': b->input_filename = optarg; break;
 		case 'o': b->output_filename = optarg; break;
 		case 'S': b->solve_filename = optarg; break;
+		case 'P': b->pdf_filename = optarg; break;
 		case 'p': b->print_frequency = atoi(optarg); break;
 		case 't': b->terminate = atoi(optarg); break;
 		case 'd': b->debug++; break;
@@ -956,14 +971,11 @@ board_process_solutions(board *b){
 	board_print_solutions(b);
 }
 
-void
-board_solve_examples(board *b){
+int
+board_next_example(board *b, FILE *fp){
 	char line[4096];
-	FILE *fp = board_fopen(b->solve_filename, "rt");
 
-	b->print_frequency = 1;
-
-	while(fgets(line, 4096, fp)){
+	while(fgets(line, sizeof(line), fp)){
 		board_reset(b);
 		if(strncmp(line, "exit", 4) == 0) break;
 
@@ -972,9 +984,9 @@ board_solve_examples(board *b){
 				char c = line[x];
 				piece *p = board_get_piece_from_abbreviation(b, c);
 				if(p){
-					board_set_piece(b, x % b->width, x / b->width, p->id);
+					board_set_piece_id(b, x % b->width, x / b->width, p->id);
 					p->inactive = 1;
-				}else if(c != '_' && c != '-' && c != ' '){
+				}else if(strchr(b->space_characters, c) == NULL){
 					printf("invalid piece: %c\nexiting\n", c);
 					exit(4);
 				}
@@ -983,7 +995,7 @@ board_solve_examples(board *b){
 
 			printf("%s", line);
 			for(int y = 0, h = b->height; y < h; y++){
-				if(fgets(line, 4096, fp) == NULL){
+				if(fgets(line, sizeof(line), fp) == NULL){
 					printf("incomplete puzzle\nexiting\n");
 					exit(3);
 				}
@@ -992,15 +1004,30 @@ board_solve_examples(board *b){
 					char c = line[x];
 					piece *p = board_get_piece_from_abbreviation(b, c);
 					if(p){
-						board_set_piece(b, x, y, p->id);
+						board_set_piece_id(b, x, y, p->id);
 						p->inactive = 1;
-					}else if(c != '_' && c != '-' && c != ' '){
+				}else if(strchr(b->space_characters, c) == NULL){
 						printf("invalid piece: %c\nexiting\n", c);
 						exit(4);
 					}
 				}
 			}
 		}
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+void
+board_solve_examples(board *b){
+	FILE *fp = board_fopen(b->solve_filename, "rt");
+
+	b->print_frequency = 1;
+
+	while(board_next_example(b, fp)){
 
 		board_print(b);
 
@@ -1020,6 +1047,105 @@ board_solve_bitmap(board *b){
 	return 0;
 }
 
+#define SQRT2	1.41421356237
+
+void
+board_add_pdf_polygon(board *b, struct pdf_doc *pdf, float *xp, float *yp, int np,
+					  float scale, float xoffset, float yoffset, unsigned int rgb){
+	for(int i = 0; i < np; i++){
+		float x = xp[i] - b->width/2;
+		float y = yp[i] - b->height/2;
+
+		float xx = (x + y)/SQRT2;
+		float yy = (y - x)/SQRT2;
+
+		xp[i] = xx + b->width/2;
+		yp[i] = yy + b->height/2;
+
+		xp[i] = xp[i] * scale + xoffset;
+		yp[i] = yp[i] * scale + yoffset;
+		printf("%d %f %f\n", i, xp[i], yp[i]);
+	}
+
+	pdf_add_filled_polygon(pdf, NULL, xp, yp, np, 0.0, rgb);
+}
+
+int
+board_generate_pdf(board *b, struct pdf_doc *pdf){
+	int yy = 72;
+	int xx = 27;
+	int size = 9;
+	float xp[1000], yp[1000];
+	for(int y = 0, h = b->height - 1; y < h; y += 2){
+		for(int x = 0, w = b->width - 1; x < w; x += 2){
+			if(board_get_piece_id(b, x, y) == board_get_piece_id(b, x + 1, y) &&
+			   board_get_piece_id(b, x, y) == board_get_piece_id(b, x + 1, y + 1) &&
+			   board_get_piece_id(b, x, y) == board_get_piece_id(b, x, y + 1)){
+				piece *p = board_get_piece(b, x, y);
+				if(p){
+					int n = 0;
+					int offsets[] = { 0, 0,   2, 0,  2, 2,  0, 2 };
+					for(int o = 0; o < 8; o += 2){
+						xp[n] = (x + offsets[o]);
+						yp[n++] = (b->height - (y + offsets[o + 1]) - 1);
+					}
+
+					board_add_pdf_polygon(b, pdf, xp, yp, n, size, xx, yy, p->rgb_fill);
+				}
+			}else{
+				int offsets[] = { 0, 0,               1, 0,                0, 1,                1, 1 };
+				int corners[] = { 0, 0, 0, 2, 2, 0,   2, 0, 0, 0, 2, 2,    0, 2, 2, 2, 0, 0,    2, 2, 2, 0, 0, 2 };
+				for(int o = 0; o < 8; o += 2){
+					// printf("o %d %d %d\n", o, offsets[o], offsets[o + 1]);
+					piece *p = board_get_piece(b, x + offsets[o], y + offsets[o + 1]);
+					if(p){
+						int n = 0;
+						for(int c = (o/2) * 6; c < ((o/2) + 1) * 6; c += 2){
+							// printf("c %d %d %d\n", c, corners[c], corners[c + 1]);
+							xp[n] = (x + corners[c]);
+							yp[n++] = (b->height - (y + corners[c + 1]) - 1);
+						}
+
+						// for(int i = 0; i < n; i++){
+						// 	printf("%d %f %f\n", i, xp[i], yp[i]);
+						// }
+
+
+						board_add_pdf_polygon(b, pdf, xp, yp, n, size, xx, yy, p->rgb_fill);
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+int
+board_write_pdf(board *b){
+    struct pdf_doc *pdf = pdf_create(PDF_A4_WIDTH, PDF_A4_HEIGHT, NULL);
+	FILE *fp = board_fopen(b->input_filename, "rt");
+    pdf_set_font(pdf, "Times-Roman");
+    pdf_append_page(pdf);
+
+	b->print_frequency = 1;
+
+	while(board_next_example(b, fp)){
+		board_print(b);
+		board_generate_pdf(b, pdf);
+
+		break;
+	}
+
+	fclose(fp);
+
+    pdf_save(pdf, b->pdf_filename);
+    pdf_destroy(pdf);
+
+	return 0;
+}
+
+
 int
 main(int argc, char **argv) {
 
@@ -1029,7 +1155,10 @@ main(int argc, char **argv) {
 
 	board_initialise_pieces(b);
 
-	if(b->input_filename){
+	
+	if(b->pdf_filename){
+		board_write_pdf(b);
+	}else if(b->input_filename){
 		board_process_solutions(b);
 	}else if(b->solve_filename){
 		board_solve_examples(b);

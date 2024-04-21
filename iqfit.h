@@ -89,11 +89,13 @@ typedef struct board {
 	int total_placements;
 	int solution_placements;
 	int no_symmetry;
+	char *space_characters;
 	char *method;
 	char *config_filename;
 	char *output_filename;
 	char *input_filename;
 	char *solve_filename;
+	char *pdf_filename;
 	FILE *output_fp;
 } board;
 
