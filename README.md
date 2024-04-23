@@ -302,4 +302,7 @@ Where random.txt is some random selection of puzzles from the overall solution f
 
     sort -R solutions/iqlove_heart_solutions_three.txt | head -20 > /tmp/random.txt
 
+Here is a screenshot of some random puzzles
+
+![image](https://github.com/isohelio/puzzles/assets/38924166/59c6e08e-a574-4829-b3e1-0aa6ec266c87)
 
