@@ -241,6 +241,8 @@ board_fopen(char *filename, char *mode){
 #define board_set_piece_id(b,x,y,piece)	b->piece_id[board_index(b,x,y)] = piece
 #define board_get_region(b,x,y)			b->region_id[board_index(b,x,y)]
 #define board_set_region(b,x,y,region)	b->region_id[board_index(b,x,y)] = region
+#define board_get_value(b,x,y)			b->board[board_index(b,x,y)] = region
+#define board_get_mask(b,x,y)			b->board_mask[board_index(b, x, y)]
 
 piece *
 board_get_piece(board *b, int x, int y){
@@ -663,6 +665,8 @@ board_new(int w, int h){
 	b->advanced 		= 1;
 	b->optimisations 	= 10;
 	b->space_characters = " -_X";
+	b->rows 			= 5;
+	b->columns			= 4;
 	return b;
 }
 
@@ -687,16 +691,17 @@ board_configure(board *b){
     b->step = json_get_int(json, "step", 1, 1);
     b->flip_pieces = json_get_int(json, "flip_pieces", 1, 0);
 
-	char board_mask[BUFSIZ] = { '\0' };
+	// char board_mask[BUFSIZ] = { '\0' };
+	b->board_mask[0] = '\0';
     cJSON *board_layout = cJSON_GetObjectItem(json, "board");
     cJSON_ArrayForEach(item, board_layout){
-		strcat(board_mask, item->valuestring);
+		strcat(b->board_mask, item->valuestring);
         printf("%s\n", item->valuestring);
     }
 
-	if(strlen(board_mask) > 0 && strlen(board_mask) != b->width * b->height){
+	if(strlen(b->board_mask) > 0 && strlen(b->board_mask) != b->width * b->height){
 		printf("board mask size %ld is not same width %d * height %d = %d\n",
-				strlen(board_mask), b->width, b->height, b->width * b->height);
+				strlen(b->board_mask), b->width, b->height, b->width * b->height);
 		exit(11);
 	}
 
@@ -751,9 +756,9 @@ board_configure(board *b){
 	b->piece_id = calloc(b->width * b->height, sizeof(b->piece_id[0]));
 	b->region_id = calloc(b->width * b->height, sizeof(b->region_id[0]));
 
-	for(int c = 0, end = strlen(board_mask); c < end; c++){
-		if(board_mask[c] != '_')
-			b->piece_id[c] = board_mask[c];
+	for(int c = 0, end = strlen(b->board_mask); c < end; c++){
+		if(b->board_mask[c] != '_')
+			b->piece_id[c] = b->board_mask[c];
 	}
 
 
@@ -883,6 +888,8 @@ Solve problems from the iqfit puzzle.\n\
   -i file    read solutions from the specified file                 (default: none)\n\
   -S file    solve examples from the specified file                 (default: none)\n\
   -P file    filename for PDF output                                (default: none)\n\
+  -r n       rows for PDF output                                    (default: none)\n\
+  -c n       columns for PDF output                                 (default: none)\n\
   -D abbrevs deactivate the pieces specified by their abbreviations (default: none)\n\
   -m method  specify alternate method (currently only 'bitmap')     (default: none)\n\
   -s         only generate the non-symmetry related solutions\n\
@@ -896,6 +903,7 @@ Default behaviour is to enumerate all solutions, using all optimisations.\n\
   -O2        skip partial solutions that include 1, 2 or 3 size gaps\n\
   -O3        skip partial solutions that include some impossible shapes\n\
   -O4        skip partial solutions that include size 7 gaps\n\
+  -O6        enable the search mode that solves the IQ Love puzzle\n\
 \n\
 Copyright (C) Mike Hartshorn, 2024\n");
 
@@ -906,21 +914,23 @@ int
 board_parse_args(board *b, int argc, char **argv){
 	int c;
 
-	while ((c = getopt(argc, argv, "P:g:D:sO:i:o:S:p:t:dv0h")) != -1) {
+	while ((c = getopt(argc, argv, "r:c:P:g:D:sO:i:o:S:p:t:dv0h")) != -1) {
 		switch (c) {
-		case 'g': b->config_filename = optarg; break;
-		case 'i': b->input_filename = optarg; break;
-		case 'o': b->output_filename = optarg; break;
-		case 'S': b->solve_filename = optarg; break;
-		case 'P': b->pdf_filename = optarg; break;
-		case 'p': b->print_frequency = atoi(optarg); break;
-		case 't': b->terminate = atoi(optarg); break;
-		case 'd': b->debug++; break;
-		case 'v': b->verbose++; break;
-		case 'a': b->advanced = 1 - b->advanced; break;
-		case 's': b->no_symmetry = 1 - b->no_symmetry; break;
-		case 'O': b->optimisations = atoi(optarg); break;
-		case 'm': b->method = optarg; break;
+		case 'g': b->config_filename	= optarg; break;
+		case 'i': b->input_filename		= optarg; break;
+		case 'o': b->output_filename	= optarg; break;
+		case 'S': b->solve_filename		= optarg; break;
+		case 'P': b->pdf_filename		= optarg; break;
+		case 'r': b->rows				= atoi(optarg); break;
+		case 'c': b->columns			= atoi(optarg); break;
+		case 'p': b->print_frequency 	= atoi(optarg); break;
+		case 't': b->terminate 			= atoi(optarg); break;
+		case 'd': b->debug++;			break;
+		case 'v': b->verbose++;			break;
+		case 'a': b->advanced 			= 1 - b->advanced; break;
+		case 's': b->no_symmetry 		= 1 - b->no_symmetry; break;
+		case 'O': b->optimisations 		= atoi(optarg); break;
+		case 'm': b->method 			= optarg; break;
 		case 'D': board_disable_pieces(b, optarg); break;
 		case 'h': board_usage(); break;
 		default: board_usage(); break;
@@ -1050,12 +1060,17 @@ board_solve_bitmap(board *b){
 #define SQRT2	1.41421356237
 
 void
-board_add_pdf_polygon(board *b, struct pdf_doc *pdf, float *xp, float *yp, int np,
-					  float scale, float xoffset, float yoffset, unsigned int rgb){
+board_transform_pdf_polygon(board *b, struct pdf_doc *pdf, float *xp, float *yp, int np,
+						  float scale, float xoffset, float yoffset){
+	for(int i = 0; i < np; i++){
+		yp[i] = b->height - yp[i] - 1;
+	}
+
 	for(int i = 0; i < np; i++){
 		float x = xp[i] - b->width/2;
 		float y = yp[i] - b->height/2;
 
+		// rotate by 45 degrees
 		float xx = (x + y)/SQRT2;
 		float yy = (y - x)/SQRT2;
 
@@ -1064,18 +1079,59 @@ board_add_pdf_polygon(board *b, struct pdf_doc *pdf, float *xp, float *yp, int n
 
 		xp[i] = xp[i] * scale + xoffset;
 		yp[i] = yp[i] * scale + yoffset;
-		printf("%d %f %f\n", i, xp[i], yp[i]);
+	}
+}
+
+void
+board_add_pdf_polygon(board *b, struct pdf_doc *pdf, float *xp, float *yp, int np,
+					  float scale, float xoffset, float yoffset, unsigned int rgb){
+	board_transform_pdf_polygon(b, pdf, xp, yp, np, scale, xoffset, yoffset);
+
+	float xcen = 0.0, ycen = 0.0;
+
+	for(int i = 0; i < np; i++){
+		xcen += xp[i];
+		ycen += yp[i];
+	}
+
+	// expand the polygon away from its centroid to remove
+	// gaps between adjacent polygons
+	xcen /= (float)np;
+	ycen /= (float)np;
+
+	for(int i = 0; i < np; i++){
+		float xx = xcen - xp[i];
+		float yy = ycen - yp[i];
+		float d = sqrt(xx*xx + yy*yy);
+
+		xp[i] = xcen + (d + 10./72) * (xp[i] - xcen) / d;
+		yp[i] = ycen + (d + 10./72) * (yp[i] - ycen) / d;
 	}
 
 	pdf_add_filled_polygon(pdf, NULL, xp, yp, np, 0.0, rgb);
 }
 
+#define PDF_MARGIN	36.0
+
 int
 board_generate_pdf(board *b, struct pdf_doc *pdf){
-	int yy = 72;
-	int xx = 27;
-	int size = 9;
+	int yy = PDF_MARGIN;
+	int xx = PDF_MARGIN;
+	float hsize = 9;
+	float vsize = 0;
+	int np = 0;
 	float xp[1000], yp[1000];
+
+	hsize = (pdf_width(pdf) - 2. * PDF_MARGIN)/b->columns;
+	hsize /= b->width + 3;
+	vsize = (pdf_height(pdf) - 2. * PDF_MARGIN)/b->rows;
+	vsize /= b->height + 3;
+
+	if(b->generated_pdfs % (b->rows * b->columns) == 0) pdf_append_page(pdf);
+
+	xx += hsize * (b->width + 3) * (b->generated_pdfs % b->columns);
+	yy += vsize * (b->height + 3) * ((b->generated_pdfs % (b->columns * b->rows))/ b->columns);
+
 	for(int y = 0, h = b->height - 1; y < h; y += 2){
 		for(int x = 0, w = b->width - 1; x < w; x += 2){
 			if(board_get_piece_id(b, x, y) == board_get_piece_id(b, x + 1, y) &&
@@ -1083,40 +1139,68 @@ board_generate_pdf(board *b, struct pdf_doc *pdf){
 			   board_get_piece_id(b, x, y) == board_get_piece_id(b, x, y + 1)){
 				piece *p = board_get_piece(b, x, y);
 				if(p){
-					int n = 0;
+					np = 0;
 					int offsets[] = { 0, 0,   2, 0,  2, 2,  0, 2 };
 					for(int o = 0; o < 8; o += 2){
-						xp[n] = (x + offsets[o]);
-						yp[n++] = (b->height - (y + offsets[o + 1]) - 1);
+						xp[np] = (x + offsets[o]);
+						yp[np++] = (y + offsets[o + 1]);
 					}
 
-					board_add_pdf_polygon(b, pdf, xp, yp, n, size, xx, yy, p->rgb_fill);
+					board_add_pdf_polygon(b, pdf, xp, yp, np, hsize, xx, yy, p->rgb_fill);
 				}
 			}else{
 				int offsets[] = { 0, 0,               1, 0,                0, 1,                1, 1 };
 				int corners[] = { 0, 0, 0, 2, 2, 0,   2, 0, 0, 0, 2, 2,    0, 2, 2, 2, 0, 0,    2, 2, 2, 0, 0, 2 };
 				for(int o = 0; o < 8; o += 2){
-					// printf("o %d %d %d\n", o, offsets[o], offsets[o + 1]);
 					piece *p = board_get_piece(b, x + offsets[o], y + offsets[o + 1]);
 					if(p){
-						int n = 0;
+						np = 0;
 						for(int c = (o/2) * 6; c < ((o/2) + 1) * 6; c += 2){
-							// printf("c %d %d %d\n", c, corners[c], corners[c + 1]);
-							xp[n] = (x + corners[c]);
-							yp[n++] = (b->height - (y + corners[c + 1]) - 1);
+							xp[np] = (x + corners[c]);
+							yp[np++] = (y + corners[c + 1]);
 						}
 
-						// for(int i = 0; i < n; i++){
-						// 	printf("%d %f %f\n", i, xp[i], yp[i]);
-						// }
-
-
-						board_add_pdf_polygon(b, pdf, xp, yp, n, size, xx, yy, p->rgb_fill);
+						board_add_pdf_polygon(b, pdf, xp, yp, np, hsize, xx, yy, p->rgb_fill);
 					}
 				}
 			}
 		}
 	}
+
+	// draw the lines that make up the ridges in the board
+	// could not quite figure out how to generate these from the board mask
+	// so just hard wire them here
+	int grid[][4] = {
+		{ 6, 0, 10, 0 },
+		{ 4, 2, 12, 2 },
+		{ 2, 4, 12, 4 },
+		{ 0, 6, 12, 6 },
+		{ 0, 8, 12, 8 },
+		{ 0, 10, 12, 10 },
+		{ 2, 12, 12, 12 },
+
+		{ 0, 6, 0, 10 },
+		{ 2, 4, 2, 12 },
+		{ 4, 2, 4, 12 },
+		{ 6, 0, 6, 12 },
+		{ 8, 0, 8, 12 },
+		{ 10, 0, 10, 12 },
+		{ 12, 2, 12, 12 },
+
+		{ 0, 10, 2, 12 },
+		{ 10, 0, 12, 2 },
+		{ 0, 6, 2, 4 },
+		{ 6, 0, 4, 2 },
+	};
+
+	for(int g = 0; g < LEN(grid); g++){
+		xp[0] = grid[g][0]; yp[0] = grid[g][1];
+		xp[1] = grid[g][2]; yp[1] = grid[g][3];
+		board_transform_pdf_polygon(b, pdf, xp, yp, np, hsize, xx, yy);
+		pdf_add_line(pdf, NULL, xp[0], yp[0], xp[1], yp[1], 1., 0x889999cc);
+	}
+
+	b->generated_pdfs++;
 
 	return 0;
 }
@@ -1126,7 +1210,6 @@ board_write_pdf(board *b){
     struct pdf_doc *pdf = pdf_create(PDF_A4_WIDTH, PDF_A4_HEIGHT, NULL);
 	FILE *fp = board_fopen(b->input_filename, "rt");
     pdf_set_font(pdf, "Times-Roman");
-    pdf_append_page(pdf);
 
 	b->print_frequency = 1;
 
@@ -1134,7 +1217,7 @@ board_write_pdf(board *b){
 		board_print(b);
 		board_generate_pdf(b, pdf);
 
-		break;
+		if(b->generated_pdfs == b->terminate) break;
 	}
 
 	fclose(fp);

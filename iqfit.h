@@ -75,6 +75,7 @@ typedef struct board {
 	int region_points[4 * BOARD_WIDTH * BOARD_HEIGHT];
 	int region_count;
 	unsigned long long search_calls[128];
+	char board_mask[1024];
 	int width;
 	int height;
 	int step;
@@ -97,6 +98,10 @@ typedef struct board {
 	char *solve_filename;
 	char *pdf_filename;
 	FILE *output_fp;
+
+	int generated_pdfs;
+	int rows;
+	int columns;
 } board;
 
 #endif /* IQFIT_H */

@@ -8,6 +8,8 @@ A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
 
 ![image](https://github.com/isohelio/puzzles/assets/38924166/a4f86dbb-4a9a-4ddb-b074-2a31ba0e3487)
 
+And also solutions for the IQ Love puzzle, which has more complex geometric shapes.
+
 ### Installation
 
 The software should run on any linux type system with `gcc` and `Python` for some post processing.
