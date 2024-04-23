@@ -289,3 +289,17 @@ To generate the solutions for this puzzle use
 
 Generation is rather slow as there are no acceleration options for this puzzle type. The puzzle is represented using the same grid approach as IQ Fit, but each cell in the puzzles is represented by a 2x2 grid. The half square pieces use one of the 2x2 cells and rule prevents placements that don't allow moves which put the pieces anywhere other than opposite on a diagonal (this is not well explained here).
 
+### Two and Three Piece Puzzles
+
+New puzzles that have two or three starting pieces and lead to a single solution can be generated in the same way as for IQ Fit. 
+A PDF can be generated of the solutions or the puzzle starting points.
+
+    ./iqfit -g config/iqlove_heart.json -i /tmp/random.txt -P solutions/iqlove_heart_solutions_three_random.pdf -t 200 -r 5 -c 4
+
+An example [PDF](https://github.com/isohelio/puzzles/blob/main/solutions/iqlove_heart_solutions_three_random.pdf) is in the output foler.
+
+Where random.txt is some random selection of puzzles from the overall solution file. This can be generated with e.g.
+
+    sort -R solutions/iqlove_heart_solutions_three.txt | head -20 > /tmp/random.txt
+
+
