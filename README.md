@@ -10,6 +10,9 @@ A recursive search algorithm for finding all solutions of the IQ FIT puzzle.
 
 And also solutions for the IQ Love puzzle, which has more complex geometric shapes.
 
+![image](https://github.com/isohelio/puzzles/assets/38924166/9dd410e3-9478-4562-928a-3c84b99c8e8e)
+
+
 ### Installation
 
 The software should run on any linux type system with `gcc` and `Python` for some post processing.
