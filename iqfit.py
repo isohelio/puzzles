@@ -210,6 +210,7 @@ class Iqfit:
         parser.add_argument("--dedup", action='store_true', help="Deduplicate", default=False)
 
         parser.add_argument("--format", action='store_true', help="File to format.")
+        parser.add_argument("--one", action='store_true', help="Produce one piece single solution puzzles.")
         parser.add_argument("--two", action='store_true', help="Produce two piece single solution puzzles.")
         parser.add_argument("--three", action='store_true', help="Produce three piece single solution puzzles.")
         parser.add_argument("--image", action='store_true', help="File to generate image for.")
@@ -255,6 +256,19 @@ class Iqfit:
             print(len(two_piece_single_solutions))
 
             self.write_solutions(two_piece_single_solutions, self.args.output)
+        elif self.args.one:
+            if not self.args.output: self.args.output = "one_piece_solutions.txt"
+            self.read_solutions(self.args.input)
+
+            one_piece_solutions = self.get_one_piece_solutions()
+            print(one_piece_solutions[:10])
+            one_piece_solutions = self.count_solutions(one_piece_solutions)
+            
+            one_piece_single_solutions = [s for s in one_piece_solutions if s[1] == 1]
+
+            print(len(one_piece_single_solutions))
+
+            self.write_solutions(one_piece_single_solutions, self.args.output)
 
 
 def main():
